@@ -18,17 +18,16 @@ buildInfo = {
 			"${nodejs}/bin/npm"
 			"start"
 		];
-		#WorkingDir = "/lib/${nodeModules.modulePath}/${nodeModules.basicName}";
-		WorkingDir = "/";
+		WorkingDir = "/opt/app";
   };
-	name = "sotekton-base-node";
-	tag = if ver == null then "latest" else ver;
+	name = "sotekton/basal";
+	tag = if ver == null then "nodejs" else "nodejs${ver}";
 };
 
 # Base Image should contain only the essentials to run the application in a container.
 # Alternatives to nologin are 'su' and 'shadow' (full suite)
 imagePackages				= [ pkgs.coreutils pkgs.nologin pkgs.bash ];
-path						= "PATH=/usr/bin:/bin";
+path						= "PATH=/usr/bin:/bin:${nodejs}/bin";
 
 #######################
 # Build Image Code    #
@@ -89,5 +88,6 @@ EOF
 			chmod 0555 ./etc/pam.d/other
 			chmod 0555 ./etc/pam.d
 			ln -s "${pkgs.bash}/bin/bash" ./bash
+			mkdir -p ./opt/app
 			'';
 	}
