@@ -1,0 +1,6 @@
+FROM sotekton/basal:makisu
+
+Add . /basal/
+
+WORKDIR basal/
+RUN ./node
