@@ -1,0 +1,124 @@
+{
+  "0": {
+    "name": "Status: Abandoned",
+    "color": "#000000"
+  },
+  "1": {
+    "name": "Status: Accepted",
+    "color": "#009800"
+  },
+  "2": {
+    "name": "Status: Available",
+    "color": "#bfe5bf"
+  },
+  "3": {
+    "name": "Status: Blocked",
+    "color": "#e11d21"
+  },
+  "4": {
+    "name": "Status: Completed",
+    "color": "#006b75"
+  },
+  "5": {
+    "name": "Status: In Progress",
+    "color": "#cccccc"
+  },
+  "6": {
+    "name": "Status: Pending",
+    "color": "#fef2c0"
+  },
+  "7": {
+    "name": "Status: Review Needed",
+    "color": "#fbca04"
+  },
+  "8": {
+    "name": "Status: Revision Needed",
+    "color": "#e11d21"
+  },
+  "9": {
+    "name": "Type: Bug",
+    "color": "#e11d21"
+  },
+  "10": {
+    "name": "Type: Duplicate",
+    "color": "#ffffff"
+  },
+  "11": {
+    "name": "Type: Enhancement",
+    "color": "#84b6eb"
+  },
+  "12": {
+    "name": "Type: Maintenance",
+    "color": "#fbca04"
+  },
+  "13": {
+    "name": "Type: Question",
+    "color": "#cc317c"
+  },
+  "14": {
+    "name": "ʕノ•ᴥ•ʔノ ︵ ┻━┻",
+    "color": "#003366"
+  },
+  "labelData": [
+    {
+      "name": "Status: Abandoned",
+      "color": "#000000"
+    },
+    {
+      "name": "Status: Accepted",
+      "color": "#009800"
+    },
+    {
+      "name": "Status: Available",
+      "color": "#bfe5bf"
+    },
+    {
+      "name": "Status: Blocked",
+      "color": "#e11d21"
+    },
+    {
+      "name": "Status: Completed",
+      "color": "#006b75"
+    },
+    {
+      "name": "Status: In Progress",
+      "color": "#cccccc"
+    },
+    {
+      "name": "Status: Pending",
+      "color": "#fef2c0"
+    },
+    {
+      "name": "Status: Review Needed",
+      "color": "#fbca04"
+    },
+    {
+      "name": "Status: Revision Needed",
+      "color": "#e11d21"
+    },
+    {
+      "name": "Type: Bug",
+      "color": "#e11d21"
+    },
+    {
+      "name": "Type: Duplicate",
+      "color": "#ffffff"
+    },
+    {
+      "name": "Type: Enhancement",
+      "color": "#84b6eb"
+    },
+    {
+      "name": "Type: Maintenance",
+      "color": "#fbca04"
+    },
+    {
+      "name": "Type: Question",
+      "color": "#cc317c"
+    },
+    {
+      "name": "ʕノ•ᴥ•ʔノ ︵ ┻━┻",
+      "color": "#003366"
+    }
+  ]
+}

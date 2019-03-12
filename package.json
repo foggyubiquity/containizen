@@ -1,0 +1,18 @@
+{
+	"name": "agnostic-basal",
+	"version": "0.1.0",
+	"description": "base container builders (NIX) for agnostic process",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sotekton/agnostic-basal.git"
+	},
+	"author": {
+		"name": "sotekton",
+		"url": "https://sotekton.com"
+	},
+	"license": "SEE LICENSE IN LICENSE",
+	"bugs": {
+		"url": "https://github.com/sotekton/agnostic-basal/issues"
+	},
+	"homepage": "https://github.com/sotekton/agnostic-basal#readme"
+}
