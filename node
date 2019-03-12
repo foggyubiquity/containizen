@@ -1,3 +1,3 @@
 echo "Building LTS Nix (8) Container"
 nix-build node.nix
-nix-shell -p skopeo --run "skopeo copy --dest-creds $USERNAME:$PASSWORD docker-archive://basal/result docker://sotekton/basal:nodejs"
+nix-shell --cores 0 --pure --keep USERNAME --keep PASSWORD -p skopeo --run "skopeo copy --dest-creds $USERNAME:$PASSWORD docker-archive://basal/result docker://sotekton/basal:nodejs"

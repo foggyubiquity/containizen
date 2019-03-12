@@ -1,0 +1,34 @@
+steps:
+# Build the nix-build builder image.
+- name: gcr.io/cloud-builders/docker
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/nix-build', '.']
+
+# Use the image to build the Nix build cript.
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+# docker-load the built image.
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  entrypoint: 'bash'
+  args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
+  secretEnv: ['DOCKERHUB']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs']
+
+  # images:
+  # - gcr.io/$PROJECT_ID/nix-build
+
+substitutions:
+  _DOCKERNAME: sotekton
+secrets:
+- kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/containers/cryptoKeys/dockerhub
+  secretEnv:
+    DOCKERHUB: CiQApIWz93qWxiCfGBp3LPigGZ9PebTaukp4ZwsJN0S8ShMW7ZMSQgAeTE5Jp4Z6SpdttiD+zAuUCzHzZNhHUybbgh+VkCj8K4rrMsYc3QCwlLO2xirx0ZGbycNiOqUxkeHDS0RZRaBm9Q==
+
