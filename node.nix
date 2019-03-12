@@ -21,7 +21,7 @@ buildInfo = {
 		WorkingDir = "/opt/app";
   };
 	name = "sotekton/basal";
-	tag = if ver == null then "nodejs" else "nodejs-${ver}_x";
+	tag = if ver == null then "nodejs" else "nodejs${ver}";
 };
 
 # Base Image should contain only the essentials to run the application in a container.

@@ -2,7 +2,12 @@ steps:
 # Build the nix-build builder image.
 - name: gcr.io/cloud-builders/docker
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/nix-build', '.']
+- name: gcr.io/cloud-builders/docker
+  entrypoint: 'bash'
+  args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
+  secretEnv: ['DOCKERHUB']
 
+# NodeJS LTS
 # Use the image to build the Nix build cript.
 - name: gcr.io/$PROJECT_ID/nix-build
   args: ['--cores', '0', 'node.nix']
@@ -15,12 +20,22 @@ steps:
   volumes:
   - name: nix-store
     path: /nix/
-- name: gcr.io/cloud-builders/docker
-  entrypoint: 'bash'
-  args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
-  secretEnv: ['DOCKERHUB']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/basal:nodejs']
+
+# NodeJS 10
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'ver', '10', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs10']
 
   # images:
   # - gcr.io/$PROJECT_ID/nix-build
