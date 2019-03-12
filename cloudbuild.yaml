@@ -28,7 +28,7 @@ steps:
 substitutions:
   _DOCKERNAME: sotekton
 secrets:
-- kmsKeyName: projects/$PROJECT_ID/locations/global/keyRings/containers/cryptoKeys/dockerhub
-  secretEnv:
-    DOCKERHUB: CiQApIWz93qWxiCfGBp3LPigGZ9PebTaukp4ZwsJN0S8ShMW7ZMSQgAeTE5Jp4Z6SpdttiD+zAuUCzHzZNhHUybbgh+VkCj8K4rrMsYc3QCwlLO2xirx0ZGbycNiOqUxkeHDS0RZRaBm9Q==
+  - kmsKeyName: projects/${PROJECT_ID}/locations/global/keyRings/containers/cryptoKeys/dockerhub
+    secretEnv:
+      DOCKERHUB: CiQApIWz93qWxiCfGBp3LPigGZ9PebTaukp4ZwsJN0S8ShMW7ZMSQgAeTE5Jp4Z6SpdttiD+zAuUCzHzZNhHUybbgh+VkCj8K4rrMsYc3QCwlLO2xirx0ZGbycNiOqUxkeHDS0RZRaBm9Q==
 
