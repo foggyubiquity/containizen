@@ -1,6 +1,6 @@
 {
   ver ? null,
-  withNPM ? false,
+  withNPM ? "false",
   pkgs ? import <nixpkgs> {
     overlays = [ (self: super: {
     # Allow unstable libraries if newer versions are of software are needed
@@ -42,8 +42,8 @@ buildInfo = {
 language = {
   toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
   package = pkgs.${language.toNix};
-  slim = if withNPM == false then "-slim" else "";
-  npm = if withNPM == true then "-npm" else "";
+  slim = if withNPM == "false" then "-slim" else "";
+  npm = if withNPM == "true" then "-npm" else "";
 };
 
 #######################
