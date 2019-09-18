@@ -1,5 +1,6 @@
 {
   ver ? null,
+  withNPM ? false,
   pkgs ? import <nixpkgs> {
     overlays = [ (self: super: {
     # Allow unstable libraries if newer versions are of software are needed
@@ -28,60 +29,26 @@ buildInfo = {
   ];
     # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
     Cmd = [
-      "${nodejs}/bin/npm"
+      # Full NodeJS version also contains NPM, strictly not necessary for production deployments
+      "${language.package}/bin/npm"
       "start"
     ];
     WorkingDir = "/opt/app";
   };
   name = "sotekton/basal";
-  tag = if ver == null t
-  #!nix-shell -i bash -p curl pcre common-updater-scriptshen "nodejs" else "nodejs${ver}";
+  tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
 };
 
-# Base Image should contain only the essentials to run the application in a container.
-# Alternatives to nologin are 'su' and 'shadow' (full suite)
-imagePackages = [ pkgs.coreutils pkgs.nologin pkgs.bash ];
-path = "PATH=/usr/bin:/bin:${nodejs}/bin";
+language = {
+  toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
+  package = pkgs.${language.toNix};
+  slim = if withNPM == false then "-slim" else "";
+  npm = if withNPM == true then "-npm" else "";
+};
 
 #######################
 # Build Image Code    #
 #######################
 
-s6-overlay = pkgs.callPackage ./s6-overlay.nix {};
-
-nodepkg = if ver == null then "nodejs" else "nodejs-${ver}_x";
-nodejs = pkgs.${nodepkg};
-
 in
-  pkgs.dockerTools.buildLayeredImage {
-    name = buildInfo.name;
-    tag = buildInfo.tag;
-    contents = imagePackages ++ buildInfo.packages ++ [ s6-overlay ];
-    maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
-    config = ({
-      Entrypoint = [ "/init" ];
-    } // buildInfo.config // { Env = buildInfo.config.Env ++ [ path ]; });
-    extraCommands = ''
-      chmod 755 ./etc
-      echo "root:x:0:0::/root:${pkgs.bash}" > ./etc/passwd
-      chmod 0555 ./etc/passwd
-      echo "root:!x:::::::" > ./etc/shadow
-      chmod 0555 ./etc/shadow
-      echo "root:x:0:" > ./etc/group
-      chmod 0555 ./etc/group
-      echo "root:x::" > ./etc/gshadow
-      chmod 0555 ./etc/gshadow
-      mkdir -p ./etc/pam.d
-      chmod 755 ./etc/pam.d
-      cat > ./etc/pam.d/other <<EOF
-      account sufficient pam_unix.so
-      auth sufficient pam_rootok.so
-      password requisite pam_unix.so nullok sha512
-      session required pam_unix.so
-      EOF
-      chmod 0555 ./etc/pam.d/other
-      chmod 0555 ./etc/pam.d
-      ln -s "${pkgs.bash}/bin/bash" ./bash
-      mkdir -p ./opt/app
-    '';
-  }
+  pkgs.callPackage ./common.nix {inherit buildInfo pkgs language;}

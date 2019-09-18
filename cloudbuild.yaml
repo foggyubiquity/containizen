@@ -7,7 +7,11 @@ steps:
   args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
   secretEnv: ['DOCKERHUB']
 
-# NodeJS LTS
+#######################
+# NodeJS              #
+#######################
+
+# LTS
 # Use the image to build the Nix build cript.
 - name: gcr.io/$PROJECT_ID/nix-build
   args: ['--cores', '0', 'node.nix']
@@ -22,7 +26,21 @@ steps:
     path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/basal:nodejs']
+# LTS with NPM
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'withNPM', 'true', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs-npm']
 
+# LTS currently v8
 # NodeJS 10
 - name: gcr.io/$PROJECT_ID/nix-build
   args: ['--cores', '0', '--argstr', 'ver', '10', 'node.nix']
@@ -36,9 +54,46 @@ steps:
     path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/basal:nodejs10']
+# NodeJS 10 with NPM
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '10', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs10-npm']
 
-  # images:
-  # - gcr.io/$PROJECT_ID/nix-build
+# NodeJS 11
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'ver', '11', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs11']
+# NodeJS 11 with NPM
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '11', 'node.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:nodejs11-npm']
 
 substitutions:
   _DOCKERNAME: sotekton

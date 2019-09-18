@@ -19,14 +19,17 @@ These images are lightweight by design with the following features:
 
 ## Updates
 
-Repository is only updated with critical functionality or when a key dependency requires it i.e. S6
+Repository is only updated in one of the following situations:
 
-Images are rebuilt and published to DockerHub every 24 hours automatically.
+- New language support
+- Critical functionality
+- Key dependency requires it i.e. S6
+
+Images are rebuilt and published to DockerHub _every 24 hours_ automatically.
 
 ## Further Work (PR Welcome)
 
 - Easy Pinning of NixPkgs version that Base Images were built against for those using Nix to extend base images
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - [DGoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) for execution-checks
-- Python3
 - Other Languages
