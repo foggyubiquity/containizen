@@ -95,6 +95,38 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/basal:nodejs11-npm']
 
+#######################
+# Python              #
+#######################
+
+# Python 2
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'ver', '2', 'python.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:python2']
+
+# Python 3
+- name: gcr.io/$PROJECT_ID/nix-build
+  args: ['--cores', '0', '--argstr', 'ver', '3', 'python.nix']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['load', '-i', './result']
+  volumes:
+  - name: nix-store
+    path: /nix/
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/basal:python3']
+
 substitutions:
   _DOCKERNAME: sotekton
 secrets:
