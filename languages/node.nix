@@ -28,11 +28,13 @@ buildInfo = {
       "NODE_ENV=production"
   ];
     # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
-    Cmd = [
+    Cmd = if withNPM == "true"
+    then [
       # Full NodeJS version also contains NPM, strictly not necessary for production deployments
       "${language.package}/bin/npm"
       "start"
-    ];
+    ]
+    else [];
     WorkingDir = "/opt/app";
   };
   name = "sotekton/basal";

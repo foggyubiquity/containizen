@@ -12,10 +12,10 @@ These images are lightweight by design with the following features:
 
 ## Extending
 
-`extending.example.*` are available to understand how Nix could be used to extend these base images.
+`extending/example.*` are available to understand how Nix could be used to extend these base images.
 
-- `extending.example.sh` downloads a specified base image into the current directory
-- `nix-build extending.example.nix` creates the usual `result` linking to a `tar.gz` image
+- `extending/example.sh` downloads a specified base image into the current directory
+- `nix-build extending/example.nix` creates the usual `result` linking to a `tar.gz` image
 
 ## Updates
 
@@ -31,5 +31,5 @@ Images are rebuilt and published to DockerHub _every 24 hours_ automatically.
 
 - Easy Pinning of NixPkgs version that Base Images were built against for those using Nix to extend base images
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
-- [DGoss](https://github.com/aelsabbahy/goss/tree/master/extras/dgoss) for execution-checks
+- Cache nix/store in CloudBuild
 - Other Languages

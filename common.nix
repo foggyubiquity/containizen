@@ -17,19 +17,25 @@ let
 # Base Image should contain only the essentials to run the application in a container.
 # Alternatives to nologin are 'su' and 'shadow' (full suite)
 imagePackages = [ pkgs.coreutils pkgs.nologin pkgs.bash ];
-path = "PATH=/usr/bin:/bin:${language.package}/bin";
+path = "PATH=/usr/bin:/bin:${goss}/bin;${language.package}/bin";
+
+#######################
+# Derivations         #
+#######################
+
+goss = pkgs.callPackage ./pkgs/goss.nix {};
+s6-overlay = pkgs.callPackage ./pkgs/s6-overlay.nix {};
 
 #######################
 # Build Image Code    #
 #######################
 
-s6-overlay = pkgs.callPackage ./s6-overlay.nix {};
 
 in
   pkgs.dockerTools.buildLayeredImage {
     name = buildInfo.name;
     tag = buildInfo.tag;
-    contents = imagePackages ++ buildInfo.packages ++ [ s6-overlay ];
+    contents = imagePackages ++ buildInfo.packages ++ [ s6-overlay goss ];
     maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
     config = ({
       Entrypoint = [ "/init" ];
