@@ -53,4 +53,4 @@ language = {
 #######################
 
 in
-  pkgs.callPackage ./common.nix {inherit buildInfo pkgs language;}
+  pkgs.callPackage ../common.nix {inherit buildInfo pkgs language;}

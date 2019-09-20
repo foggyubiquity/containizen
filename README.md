@@ -32,4 +32,5 @@ Images are rebuilt and published to DockerHub _every 24 hours_ automatically.
 - Easy Pinning of NixPkgs version that Base Images were built against for those using Nix to extend base images
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Cache nix/store in CloudBuild
+- S6 Automatically execute & monitor Goss
 - Other Languages
