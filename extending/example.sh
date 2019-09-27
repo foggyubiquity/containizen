@@ -3,7 +3,7 @@
 
 if [ $# -lt 1 ]; then
     echo "Specify which base image to download"
-    echo "extending.example nodejs"
+    echo "extending.sh nodejs"
     exit 1
 fi
 

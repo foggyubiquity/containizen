@@ -1,6 +1,6 @@
 {
   localContainizen ? false,
-  fromContainizen ? "nodejs",
+  fromContainizen ? "nodejs-slim",
   imageData ? {
     name = "sotekton/containizen";
     tag = "extended";
@@ -23,6 +23,7 @@ let
 #######################
 
 buildInfo = {
+  language = pkgs."${fromContainizen}";
   packages = [
   ];
   # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
@@ -33,8 +34,7 @@ buildInfo = {
     ];
     # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
     Cmd = [
-      "${pkgs.nodejs}/bin/npm"  # assuming the same NixPkgs version used to build both Base Image & this one or additional paths may be introduced extraneously into the store
-      "start"
+      "${buildInfo.language}/bin/node"  # assuming the same NixPkgs version used to build both Base Image & this one or additional paths may be introduced extraneously into the store
     ];
     WorkingDir = "/opt/app";
   };
@@ -45,7 +45,7 @@ buildInfo = {
 # Production should contain only the essentials to run the application in a container.
 additonalPackages = [ pkgs.htop ];
 # extend path with additional locations if necessary
-path = "PATH=/usr/bin:/bin";
+path = "PATH=/usr/bin:/bin:${buildInfo.language}/bin";
 
 #######################
 # Build Image Code    #
