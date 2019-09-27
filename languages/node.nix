@@ -37,7 +37,7 @@ buildInfo = {
     else [];
     WorkingDir = "/opt/app";
   };
-  name = "sotekton/basal";
+  name = "sotekton/containizen";
   tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
 };
 

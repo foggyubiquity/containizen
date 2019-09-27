@@ -29,7 +29,7 @@ buildInfo = {
     ];
     WorkingDir = "/opt/app";
   };
-  name = "sotekton/basal";
+  name = "sotekton/containizen";
   tag = if ver == null then "python3" else "python${ver}";
 };
 

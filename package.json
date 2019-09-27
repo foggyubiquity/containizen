@@ -1,10 +1,10 @@
 {
-	"name": "agnostic-basal",
+	"name": "containizen",
 	"version": "0.1.0",
 	"description": "base container builders (NIX) for agnostic process",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/sotekton/agnostic-basal.git"
+		"url": "git+https://github.com/sotekton/containizen.git"
 	},
 	"author": {
 		"name": "sotekton",
@@ -12,7 +12,7 @@
 	},
 	"license": "SEE LICENSE IN LICENSE",
 	"bugs": {
-		"url": "https://github.com/sotekton/agnostic-basal/issues"
+		"url": "https://github.com/sotekton/containizen/issues"
 	},
-	"homepage": "https://github.com/sotekton/agnostic-basal#readme"
+	"homepage": "https://github.com/sotekton/containizen#readme"
 }

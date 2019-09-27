@@ -23,7 +23,7 @@ steps:
   - name: nix-store
     path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/basal:python2']
+  args: ['push', 'sotekton/containizen:python2']
 
 # Python 3
 - name: gcr.io/$PROJECT_ID/nix-build
@@ -37,7 +37,7 @@ steps:
   - name: nix-store
     path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/basal:python3']
+  args: ['push', 'sotekton/containizen:python3']
 
 substitutions:
   _DOCKERNAME: sotekton

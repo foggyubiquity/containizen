@@ -1,4 +1,4 @@
-# Basal
+# Containizen
 > Max Security Minimal Footprint Base Containers
 
 These images are lightweight by design with the following features:

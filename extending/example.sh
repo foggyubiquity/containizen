@@ -7,8 +7,8 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
-SOURCE_URL="docker://docker.io/sotekton/basal:$1"
-DEST_URL="docker-archive://${PWD}/sotekton-basal.tar"
+SOURCE_URL="docker://docker.io/sotekton/containizen:$1"
+DEST_URL="docker-archive://${PWD}/containizen.tar"
 
 COMMON="skopeo --override-os linux --override-arch amd64"
 
@@ -21,5 +21,5 @@ fi
 
 # No Sane Way to Check Image Parity Yet
 
-rm -f ${PWD}/sotekton-basal.tar
-eval "$COMMON copy $SOURCE_URL '$DEST_URL:sotekton/basal:$1'"
+rm -f ${PWD}/containizen.tar
+eval "$COMMON copy $SOURCE_URL '$DEST_URL:sotekton/containizen:$1'"

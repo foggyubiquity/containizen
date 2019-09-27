@@ -1,8 +1,8 @@
 {
-  localBasal ? false,
-  fromBasal ? "nodejs",
+  localContainizen ? false,
+  fromContainizen ? "nodejs",
   imageData ? {
-    name = "sotekton/basal";
+    name = "sotekton/containizen";
     tag = "extended";
   },
   pkgs ? import <nixpkgs> {
@@ -58,7 +58,7 @@ in
     created = "now";  # Current TimeStamp instead of layeredImage epoch + 1 (for caching)
     name = buildInfo.name;
     tag = buildInfo.tag;
-    fromImage = if localBasal then  "${./result}" else "${./sotekton-basal.tar}";
+    fromImage = if localContainizen then  "${./result}" else "${./containizen.tar}";
     contents = additonalPackages;
     # Nix is building the container in a workspace, links should always be ./ which will result in / in the final container
     extraCommands = ''
