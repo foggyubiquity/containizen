@@ -5,15 +5,11 @@
     name = "sotekton/containizen";
     tag = "extended";
   },
-  pkgs ? import <nixpkgs> {
-    overlays = [ (self: super: {
-    # Allow unstable libraries if newer versions are of software are needed
-    unstable = import (
-      fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz
-      ) { config = { allowUnfree = true; }; };
-    }
-    ) ];
-  }
+  pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; },
+  # Allow unstable libraries if newer versions are of software are needed
+  unstable ? import (
+      fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
+      ) { config = { allowUnfree = true; }; }
 }:
 
 let

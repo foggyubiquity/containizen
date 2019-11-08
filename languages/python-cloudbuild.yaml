@@ -1,7 +1,4 @@
 steps:
-# Build the nix-build builder image.
-- name: gcr.io/cloud-builders/docker
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/nix-build', '.']
 - name: gcr.io/cloud-builders/docker
   entrypoint: 'bash'
   args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
@@ -12,7 +9,8 @@ steps:
 #######################
 
 # Python 2
-- name: gcr.io/$PROJECT_ID/nix-build
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'ver', '2', 'languages/python.nix']
   volumes:
   - name: nix-store
@@ -26,7 +24,8 @@ steps:
   args: ['push', 'sotekton/containizen:python2']
 
 # Python 3
-- name: gcr.io/$PROJECT_ID/nix-build
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'ver', '3', 'languages/python.nix']
   volumes:
   - name: nix-store

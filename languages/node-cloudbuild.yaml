@@ -1,7 +1,4 @@
 steps:
-# Build the nix-build builder image.
-- name: gcr.io/cloud-builders/docker
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/nix-build', '.']
 - name: gcr.io/cloud-builders/docker
   entrypoint: 'bash'
   args: ['-c', 'docker login --username=${_DOCKERNAME} --password=$$DOCKERHUB']
@@ -12,8 +9,9 @@ steps:
 #######################
 
 # LTS
-# Use the image to build the Nix build cript.
-- name: gcr.io/$PROJECT_ID/nix-build
+# Use the image to build the Nix build script.
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
   args: ['--cores', '0', 'languages/node.nix']
   volumes:
   - name: nix-store
@@ -27,7 +25,8 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/containizen:nodejs']
 # LTS with NPM
-- name: gcr.io/$PROJECT_ID/nix-build
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'withNPM', 'true', 'languages/node.nix']
   volumes:
   - name: nix-store
@@ -40,10 +39,10 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/containizen:nodejs-npm']
 
-# LTS currently v8
-# NodeJS 10
-- name: gcr.io/$PROJECT_ID/nix-build
-  args: ['--cores', '0', '--argstr', 'ver', '10', 'languages/node.nix']
+# LTS @ next
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
+  args: ['--cores', '0', '--argstr', 'ver', '${_LTSNEXT}', 'languages/node.nix']
   volumes:
   - name: nix-store
     path: /nix/
@@ -52,11 +51,21 @@ steps:
   volumes:
   - name: nix-store
     path: /nix/
+- name: gcr.io/cloud-builders/docker
+  args: ['tag', 'sotekton/containizen:nodejs${_LTSNEXT}', 'sotekton/containizen:nodejs-next']
+  id: 'tag-next'
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/containizen:nodejs10']
-# NodeJS 10 with NPM
-- name: gcr.io/$PROJECT_ID/nix-build
-  args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '10', 'languages/node.nix']
+  args: ['push', 'sotekton/containizen:nodejs${_LTSNEXT}']
+  waitFor: ['tag-next']
+  id: 'push-nodejs${_LTSNEXT}'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'sotekton/containizen:nodejs-next']
+  waitFor: ['tag-next']
+  id: 'push-nodejs-next'
+# LTS @ next with NPM
+- name: sotekton/containizen:makisu
+  entrypoint: nix-build
+  args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '${_LTSNEXT}', 'languages/node.nix']
   volumes:
   - name: nix-store
     path: /nix/
@@ -65,38 +74,21 @@ steps:
   volumes:
   - name: nix-store
     path: /nix/
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/containizen:nodejs10-npm']
-
-# NodeJS 11
-- name: gcr.io/$PROJECT_ID/nix-build
-  args: ['--cores', '0', '--argstr', 'ver', '11', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
-  args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
+  args: ['tag', 'sotekton/containizen:nodejs${_LTSNEXT}-npm', 'sotekton/containizen:nodejs-next-npm']
+  id: 'tag-next-npm'
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/containizen:nodejs11']
-# NodeJS 11 with NPM
-- name: gcr.io/$PROJECT_ID/nix-build
-  args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '11', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
-- name: gcr.io/cloud-builders/docker
-  args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
+  args: ['push', 'sotekton/containizen:nodejs${_LTSNEXT}-npm']
+  waitFor: ['tag-next-npm']
+  id: 'push-nodejs${_LTSNEXT}-npm'
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'sotekton/containizen:nodejs11-npm']
+  args: ['push', 'sotekton/containizen:nodejs-next-npm']
+  waitFor: ['tag-next-npm']
+  id: 'push-nodejs-next-npm'
 
 substitutions:
   _DOCKERNAME: sotekton
+  _LTSNEXT: '12'
 secrets:
   - kmsKeyName: projects/sotekton/locations/global/keyRings/containers/cryptoKeys/dockerhub
     secretEnv:
