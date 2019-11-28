@@ -1,11 +1,14 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p "skopeo" jq
+#! nix-shell -i bash -p "skopeo" jq curl
 
 if [ $# -lt 1 ]; then
     echo "Specify which base image to download"
     echo "extending.sh nodejs"
     exit 1
 fi
+
+# Import Common Container Config for this language
+curl "https://raw.githubusercontent.com/sotekton/containizen/master/languages/$1.nix"
 
 SOURCE_URL="docker://docker.io/sotekton/containizen:$1"
 DEST_URL="docker-archive://${PWD}/containizen.tar"

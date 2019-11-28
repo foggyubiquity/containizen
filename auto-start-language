@@ -1,0 +1,19 @@
+#!/bin/execlineb -S0
+
+# NOTE: \$ is necessary as nixpkgs is passing this text file through a bash shell environment when writing to container
+ifelse
+{ test \$# -gt 0 }
+{ exec \$@ }
+
+ifelse
+{ test -e package.json }
+{
+	redirfd -r 0 package.json
+	jq .scripts.start
+}
+
+background {
+	echo "ERROR: No language detected - specify CMD manually"
+}
+# signal: critical OS file missing
+exit 72

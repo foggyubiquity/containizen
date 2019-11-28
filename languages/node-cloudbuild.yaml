@@ -13,29 +13,17 @@ steps:
 - name: sotekton/containizen:makisu
   entrypoint: nix-build
   args: ['--cores', '0', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
 # docker-load the built image.
 - name: gcr.io/cloud-builders/docker
   args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/containizen:nodejs']
 # LTS with NPM
 - name: sotekton/containizen:makisu
   entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'withNPM', 'true', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
   args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'sotekton/containizen:nodejs-npm']
 
@@ -43,14 +31,8 @@ steps:
 - name: sotekton/containizen:makisu
   entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'ver', '${_LTSNEXT}', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
   args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
   args: ['tag', 'sotekton/containizen:nodejs${_LTSNEXT}', 'sotekton/containizen:nodejs-next']
   id: 'tag-next'
@@ -66,14 +48,8 @@ steps:
 - name: sotekton/containizen:makisu
   entrypoint: nix-build
   args: ['--cores', '0', '--argstr', 'withNPM', 'true', '--argstr', 'ver', '${_LTSNEXT}', 'languages/node.nix']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
   args: ['load', '-i', './result']
-  volumes:
-  - name: nix-store
-    path: /nix/
 - name: gcr.io/cloud-builders/docker
   args: ['tag', 'sotekton/containizen:nodejs${_LTSNEXT}-npm', 'sotekton/containizen:nodejs-next-npm']
   id: 'tag-next-npm'
@@ -89,6 +65,10 @@ steps:
 substitutions:
   _DOCKERNAME: sotekton
   _LTSNEXT: '12'
+options:
+  volumes:
+    - name: nix-store
+      path: /nix/
 secrets:
   - kmsKeyName: projects/sotekton/locations/global/keyRings/containers/cryptoKeys/dockerhub
     secretEnv:

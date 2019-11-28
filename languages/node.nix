@@ -1,49 +1,40 @@
-{
-  ver ? null,
-  withNPM ? "false",
-  pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; },
-  unstable ? import <nixpkgs-unstable> { config = { allowUnfree = true; }; }
+{ ver ? null
+, withNPM ? "false"
+, pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; }
+, unstable ? import <nixpkgs-unstable> { config = { allowUnfree = true; }; }
 }:
 
 let
 
-#######################
-# Configuration       #
-#######################
+  #######################
+  # Configuration       #
+  #######################
 
-buildInfo = {
-  packages = [
-  ];
-  # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
-  config = {
-    Env = [
-      "NODE_PATH=/node_modules"
-      "NODE_ENV=production"
-  ];
-    # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
-    Cmd = if withNPM == "true"
-    then [
-      # Full NodeJS version also contains NPM, strictly not necessary for production deployments
-      "${language.package}/bin/npm"
-      "start"
-    ]
-    else [];
-    WorkingDir = "/opt/app";
+  buildInfo = {
+    packages = [];
+    # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
+    config = configDefault // {
+      # Merge / Override inherited configDefault
+      Env = configDefault.Env ++ [];
+    };
+    name = "sotekton/containizen";
+    tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
   };
-  name = "sotekton/containizen";
-  tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
-};
 
-language = {
-  toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
-  package = pkgs.${language.toNix};
-  slim = if withNPM == "false" then "-slim" else "";
-  npm = if withNPM == "true" then "-npm" else "";
-};
+  configDefault = import ./node-config.nix {
+    inherit language pkgs unstable withNPM;
+  };
 
-#######################
-# Build Image Code    #
-#######################
+  language = {
+    toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
+    package = pkgs.${language.toNix};
+    slim = if withNPM == "false" then "-slim" else "";
+    npm = if withNPM == "true" then "-npm" else "";
+  };
+
+  #######################
+  # Build Image Code    #
+  #######################
 
 in
-  pkgs.callPackage ../common.nix {inherit buildInfo pkgs language;}
+pkgs.callPackage ../common.nix { inherit buildInfo pkgs language; }

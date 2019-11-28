@@ -1,3 +1,7 @@
 *.swp
 result*
 *.tar*
+/.undodir
+/Session.vim
+scratchpad*
+/tags
