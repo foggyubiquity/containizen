@@ -8,7 +8,7 @@ let
 
   # Base Image should contain only the essentials to run the application in a container.
   # Alternatives to nologin are 'su' and 'shadow' (full suite)
-  imagePackages = [ pkgs.coreutils pkgs.nologin pkgs.jq ];
+  imagePackages = [ pkgs.coreutils pkgs.nologin pkgs.jq pkgs.gnugrep ];
   path = "PATH=/usr/bin:/bin:${goss}/bin:${language.package}/bin";
   start = builtins.readFile ./auto-start-language;
 

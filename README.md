@@ -11,9 +11,19 @@ These images are lightweight by design with the following features:
 - Optimal use of OCI Layers to maximise Caching & minimise update footprint
 
 ## How to Use
-These images automatic start baked in according to each language's best practice.
+These images automatic start baked in according to each language's best practice. Should arguments be supplied to `CMD` they will override this autostart functionality automatically.
 
-i.e. for NodeJS it will scan `package.json` for `scripts.start` & execute appropriately. Should arguments be supplied to `CMD` they will override this autostart functionality automatically.
+### NodeJS
+* NPM is unnecessary for production code execution & can be dropped from the container. Containizen provides both variations for compatibility reasons.
+* *Auto Start*: scans `package.json` for `scripts.start` & executes the value.
+
+### Python
+* Itamar has some excellent suggestions https://pythonspeed.com/articles/pipenv-docker/ for running Python within a container.
+* `requirements.in` & `requirements.txt` should generally be used in images
+* `pip-tools` as part of the development workflow
+* `setuptools` can be useful for installing the developed application https://chriswarrick.com/blog/2014/09/15/python-apps-the-right-way-entry_points-and-scripts/
+* `pip` to actually install requirements & application in the container via `requirements.txt` & `setup.py`
+* *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `python -m xxxx`
 
 ## Extending
 

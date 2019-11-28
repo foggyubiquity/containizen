@@ -12,6 +12,20 @@ ifelse
 	jq .scripts.start
 }
 
+ifelse
+{ test -e setup.py }
+{
+	backtick EXEC {
+		# -P failing to work correctly with grep
+		# pipeline { grep -P "name\s?=\s?\W\w*\W?" ./setup.py }
+		pipeline { grep "name=" ./setup.py }
+		pipeline { cut -d"\"" -f2 }
+		cut -d"'" -f2
+	}
+	importas -u EXEC EXEC
+	exec $EXEC
+}
+
 background {
 	echo "ERROR: No language detected - specify CMD manually"
 }
