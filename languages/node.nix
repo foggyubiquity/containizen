@@ -13,16 +13,11 @@ let
   buildInfo = {
     packages = [];
     # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
-    config = configDefault // {
-      # Merge / Override inherited configDefault
-      Env = configDefault.Env ++ [];
+    config = import ./node-config.nix {
+      inherit language pkgs unstable withNPM;
     };
     name = "sotekton/containizen";
     tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
-  };
-
-  configDefault = import ./node-config.nix {
-    inherit language pkgs unstable withNPM;
   };
 
   language = {

@@ -30,11 +30,7 @@ pkgs.dockerTools.buildLayeredImage {
   tag = buildInfo.tag;
   contents = imagePackages ++ buildInfo.packages ++ [ s6-overlay goss ];
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
-  config = (
-    {
-      Entrypoint = [ "/init" ];
-    } // buildInfo.config // { Env = buildInfo.config.Env ++ [ path ]; }
-  );
+  config = buildInfo.config;
   extraCommands = ''
     # User Permissions
     mkdir -p ./opt/app ./root ./home/containizen ./etc/pam.d
