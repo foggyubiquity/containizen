@@ -20,7 +20,7 @@ let
 
   language = {
     toNix = if ver == null then "python3" else "python${ver}";
-    package = pkgs.${language.toNix};
+    pkg = pkgs.${language.toNix};
   };
 
   #######################

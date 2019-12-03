@@ -34,7 +34,11 @@
     "org.opencontainers.image.description" = "Max Security Minimal Footprint Base Containers";
     "org.opencontainers.image.documentation" = "https://hub.docker.com/r/sotekton/containizen";
     "org.opencontainers.image.licenses" = "MPL-2.0";
-    "org.opencontainers.image.revision" = pkgs.lib.removeSuffix "\n" (builtins.readFile .git/refs/heads/master);
+    "org.opencontainers.image.revision" = pkgs.lib.removeSuffix "\n" (
+      if builtins.pathExists .git/refs/heads/master
+      then builtins.readFile ./.git/refs/heads/master
+      else builtins.getEnv "GITHUB_HEAD_REF"
+    );
     "org.opencontainers.image.source" = "https://github.com/sotekton/containizen";
     "org.opencontainers.image.title" = "Containizen";
     "org.opencontainers.image.url" = "https://hub.docker.com/r/sotekton/containizen";

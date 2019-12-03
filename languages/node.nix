@@ -22,7 +22,7 @@ let
 
   language = {
     toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
-    package = pkgs.${language.toNix};
+    pkg = pkgs.${language.toNix};
     slim = if withNPM == "false" then "-slim" else "";
     npm = if withNPM == "true" then "-npm" else "";
   };

@@ -27,7 +27,7 @@ common // {
   Cmd = if withNPM == "true"
   then [
     # Full NodeJS version also contains NPM, strictly not necessary for production deployments
-    "${language.package}/bin/npm"
+    "${language.pkg}/bin/npm"
     "start"
   ]
   else [];
