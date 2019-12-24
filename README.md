@@ -31,6 +31,12 @@ Should arguments be supplied to `CMD` they will override this autostart function
 * `pip` to actually install requirements & application in the container via `requirements.txt` & `setup.py`
 * *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `python -m xxxx`
 
+## Validation
+
+Containizen includes [goss](https://github.com/aelsabbahy/goss) for conducting `serverspec` validation on container start. While there are various approaches to using goss & external helpers such as `kgoss` (Kubernetes) or `dgoss` (Docker) executing goss directly within the container on start ensures all application requirements are specified correctly irrespective of the cloud providers or container management technology. Additionally as Containizen uses optimal layer caching & goss is bound to a specific layer there is no image update or propagation overhead beyond its growing the tar.gz size by ~5Mb.
+
+TODO: (See further work) run tests prior to application start should `goss.yaml` be present in application directory
+
 ## Extending
 
 `extending/example.*` are available to understand how Nix could be used to extend these base images.
@@ -78,4 +84,5 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Cache nix/store in GitHub Actions
 - Safe / Functional way of removing `pip` from Python image.
+- Goss automatic validation if `goss.yaml` present via S6
 - Other Languages
