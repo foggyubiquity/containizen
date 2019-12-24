@@ -1,21 +1,21 @@
 { fetchurl, stdenv }:
 
 let
-  version = "v0.3.7";
+  version = "v0.3.9";
 in
-  stdenv.mkDerivation {
-    name = "goss";
-    src = fetchurl {
-      url = "https://github.com/aelsabbahy/goss/releases/download/${version}/goss-linux-amd64";
-      sha256 = "0nb068ncr17q0p48lni58wwyn6db6b6ljhz4ph9b8jbr5rzmqzrm";
-    };
-    phases = ["installPhase" "patchPhase"];
-    installPhase = ''
-      mkdir -p $out/bin
-      cp $src $out/bin/goss
-      chmod +x $out/bin/goss
-    '';
-  }
+stdenv.mkDerivation {
+  name = "goss";
+  src = fetchurl {
+    url = "https://github.com/aelsabbahy/goss/releases/download/${version}/goss-linux-amd64";
+    sha256 = "1j33arvp3050ppd26zz1psvb7wfrxqall6w5k77famgrq2l52jjy";
+  };
+  phases = [ "installPhase" "patchPhase" ];
+  installPhase = ''
+    mkdir -p $out/bin
+    cp $src $out/bin/goss
+    chmod +x $out/bin/goss
+  '';
+}
 
 # Some issues:
 # Project currently between maintainers, original vs replacer, looks like still maintained but unsure
@@ -49,4 +49,3 @@ in
 
 #   # subPackages = ["cmd/goss"];
 # }
-

@@ -4,9 +4,7 @@
     name = "sotekton/containizen";
     tag = "extended";
   }
-, pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; }
-, # Allow unstable libraries if newer versions are of software are needed
-  unstable ? import (
+, pkgs ? import (
     fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
   ) { config = { allowUnfree = true; }; }
 }:
@@ -18,7 +16,7 @@ let
   #######################
 
   configCommon = import ./example-config.nix {
-    inherit language pkgs unstable withNPM;
+    inherit language pkgs withNPM;
   };
 
   buildInfo = {

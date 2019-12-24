@@ -1,6 +1,7 @@
 { ver ? null
-, pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; }
-, unstable ? import <nixpkgs-unstable> { config = { allowUnfree = true; }; }
+, pkgs ? import (
+    fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
+  ) { config = { allowUnfree = true; }; }
 }:
 
 let
@@ -12,7 +13,7 @@ let
     packages = [];
     # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
     config = import ./python-config.nix {
-      inherit language pkgs unstable;
+      inherit language pkgs;
     };
     name = "sotekton/containizen";
     tag = if ver == null then "python3" else "python${ver}";

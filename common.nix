@@ -1,7 +1,6 @@
 { buildInfo
 , language
-, pkgs ? import <nixpkgs> { config = { allowUnfree = true; }; }
-, unstable ? import <nixpkgs-unstable> { config = { allowUnfree = true; }; }
+, pkgs
 }:
 
 let
@@ -9,7 +8,7 @@ let
   # Base Image should contain only the essentials to run the application in a container.
   # Alternatives to nologin are 'su' and 'shadow' (full suite)
   nixpkgs = with pkgs; [ coreutils nologin jq gnugrep ];
-  path = "PATH=/usr/bin:/bin:${goss}/bin:${language.pkg}/bin";
+  path = "PATH=/usr/bin:/bin:${language.pkg}/bin";
   start = builtins.readFile ./auto-start-language;
 
   #######################
@@ -17,7 +16,7 @@ let
   #######################
 
   localpkgs = [ goss s6-overlay ];
-  goss = pkgs.callPackage ./pkgs/goss.nix {};
+  goss = pks.callPackage ./pkgs/goss.nix {};
   s6-overlay = pkgs.callPackage ./pkgs/s6-overlay.nix {};
 
   #######################

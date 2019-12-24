@@ -1,11 +1,10 @@
 { language
 , pkgs
-, unstable
 }:
 
 let
   common = import ../config.nix {
-    inherit pkgs unstable;
+    inherit pkgs;
   };
 
 in
