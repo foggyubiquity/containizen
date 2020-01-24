@@ -15,7 +15,7 @@ let
     config = import ./python-config.nix {
       inherit language pkgs;
     };
-    name = "sotekton/containizen";
+    name = "foggyubiquity/containizen";
     tag = if ver == null then "python3" else "python${ver}";
   };
 

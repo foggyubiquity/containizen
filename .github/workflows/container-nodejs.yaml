@@ -18,13 +18,13 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
-      - run: docker build -t sotekton/containizen:makisu .
-      - run: docker push sotekton/containizen:makisu
+      - run: docker build -t foggyubiquity/containizen:makisu .
+      - run: docker push foggyubiquity/containizen:makisu
   nodejs:
     name: NodeJS
     runs-on: ubuntu-latest
     container:
-      image: docker://sotekton/containizen:makisu
+      image: docker://foggyubiquity/containizen:makisu
       volumes:
         - nix:/nix
     strategy:
@@ -47,15 +47,15 @@ jobs:
           args: load -i containizen.tar.gz
       - uses: actions-hub/docker@master
         with:
-          args: tag sotekton/containizen:nodejs${{ matrix.version }} sotekton/containizen:nodejs${{ matrix.next }}
+          args: tag foggyubiquity/containizen:nodejs${{ matrix.version }} foggyubiquity/containizen:nodejs${{ matrix.next }}
       - uses: actions-hub/docker@master
         with:
-          args: push sotekton/containizen:nodejs${{ matrix.next }}
+          args: push foggyubiquity/containizen:nodejs${{ matrix.next }}
   python:
     name: Python
     runs-on: ubuntu-latest
     container:
-      image: docker://sotekton/containizen:makisu
+      image: docker://foggyubiquity/containizen:makisu
       volumes:
         - nix:/nix
     strategy:
@@ -75,5 +75,5 @@ jobs:
           args: load -i containizen.tar.gz
       - uses: actions-hub/docker@master
         with:
-          args: push sotekton/containizen:python${{ matrix.version }}
+          args: push foggyubiquity/containizen:python${{ matrix.version }}
 

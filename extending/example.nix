@@ -1,7 +1,7 @@
 { localContainizen ? false
 , fromContainizen ? "nodejs-slim"
 , imageData ? {
-    name = "sotekton/containizen";
+    name = "foggyubiquity/containizen";
     tag = "extended";
   }
 , pkgs ? import (

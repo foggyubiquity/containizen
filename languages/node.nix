@@ -17,7 +17,7 @@ let
     config = import ./node-config.nix {
       inherit language pkgs withNPM;
     };
-    name = "sotekton/containizen";
+    name = "foggyubiquity/containizen";
     tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
   };
 
