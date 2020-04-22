@@ -41,6 +41,8 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} --argstr vulnix true languages/node.nix
+      - run: nix-shell -p vulnix --run 'vulnix --whitelist ./vulnix/build.whitelist ./result > vulnerabilities.txt'
       - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} languages/node.nix && cp result containizen.tar.gz
       - uses: actions-hub/docker@master
         with:
@@ -51,6 +53,10 @@ jobs:
       - uses: actions-hub/docker@master
         with:
           args: push foggyubiquity/containizen:nodejs${{ matrix.next }}
+      - uses: actions/upload-artifact@v1
+        with:
+          name: nodejs${{ matrix.next }}.txt
+          path: vulnerabilities.txt
   python:
     name: Python
     runs-on: ubuntu-latest

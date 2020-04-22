@@ -72,6 +72,10 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Containizen runs all applications by default as UID=289 or _ctz_
 - Default volume is `/data` (following the widely used _common_ container data mount point)
 
+## Vulnerabilities
+
+[Vulnix](https://github.com/flyingcircusio/vulnix) is used for scanning. Checks against NIST, although others databases can also be used. A current vulnerability list is maintained against each assembled container. For security reasons the list is *not* embedded within the assembled container. Vulnerabilities are uploaded as artifacts against the relevant [GitHub Action build](https://github.com/foggyubiquity/containizen/actions). The whitelist excludes items required for building the container that are verified as *not* included in the final result.
+
 ## Gotchas
 
 - Read-Only File-System compatible. `/tmp` & `/var` are both volumes & expect `tmpfs` File-Systems to be mounted. While its possible to run this without Read-Only set, bear in mind both `/tmp` & `/var` are ephemeral. These should be mounted at runtime via `TMPFS` (Docker) or `emptyDir` (in Kubernetes)

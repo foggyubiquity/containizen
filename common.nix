@@ -2,33 +2,19 @@
 , language
 , pkgs
 }:
-
 let
-
-  # Base Image should contain only the essentials to run the application in a container.
-  # Alternatives to nologin are 'su' and 'shadow' (full suite)
-  nixpkgs = with pkgs; [ coreutils nologin jq gnugrep ];
   path = "PATH=/usr/bin:/bin:${goss}/bin:${language.pkg}/bin";
   start = builtins.readFile ./auto-start-language;
 
-  #######################
-  # Derivations         #
-  #######################
-
-  localpkgs = [ goss s6-overlay ];
-  goss = pkgs.callPackage ./pkgs/goss.nix {};
-  s6-overlay = pkgs.callPackage ./pkgs/s6-overlay.nix {};
-
+  commonPkgs = pkgs.callPackage ./common-pkgs.nix { inherit pkgs; };
+in
   #######################
   # Build Image Code    #
   #######################
-
-
-in
 pkgs.dockerTools.buildLayeredImage {
   name = buildInfo.name;
   tag = buildInfo.tag;
-  contents = nixpkgs ++ localpkgs ++ [ language.pkg ] ++ buildInfo.packages;
+  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ buildInfo.packages;
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
   config = buildInfo.config;
   extraCommands = ''
