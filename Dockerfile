@@ -1,18 +1,17 @@
-FROM gcr.io/makisu-project/makisu:latest AS makisu
+FROM gcr.io/uber-container-tools/makisu:latest AS makisu
 
 FROM nixorg/nix:latest as nix
 COPY --from=makisu /makisu-internal /makisu-internal
 
-RUN nix-channel --add https://nixos.org/channels/nixos-19.09 nixos
-RUN nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
+RUN nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 RUN nix-channel --update
 
 # Alias commonly used alternate names
 # Symlinks are still valid in NixOS & prevent file duplication / image bloat
 # NOTE: nix-channel --update will remove these symlinks as channel link increases in number
-RUN ln -s $NIX_PATH/nixos-unstable $NIX_PATH/unstable
-RUN ln -s $NIX_PATH/nixos-unstable $NIX_PATH/nixpkgs-unstable
-RUN ln -s $NIX_PATH/nixos $NIX_PATH/nixpkgs
+# RUN ln -s $NIX_PATH/nixos-unstable $NIX_PATH/unstable
+# RUN ln -s $NIX_PATH/nixos-unstable $NIX_PATH/nixpkgs-unstable
+# RUN ln -s $NIX_PATH/nixos $NIX_PATH/nixpkgs
 
 # Makisu can only build ontop of an existing base container.. will reset all files from there due to restrictions on Docker Run
 # Buildah also has no viable solution for Docker Run

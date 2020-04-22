@@ -61,7 +61,6 @@ Images are rebuilt and published to DockerHub _every 24 hours_ automatically.
 * Understanding [Stable vs Unstable](https://nixos.wiki/wiki/Nix_channels). While the latest *stable* channel could have been used (and has been in the past) for just security patches. Feedback from the community has been to utilize *unstable* channel and specify package version. Guaranteeing security patches are applied as soon as possible while pinning to LTS the released language version.
 * While both branches `nixos-unstable` & `nixpkgs-unstable` track `master`. `nixpkgs-unstable` is selected to ensure no additional NixOS dependencies are accidentally introduced into containers over time.
 
-
 ## Open Containers Specification
 
 Labels are respected, for those unfamiliar all built containers _should_ have these [annotations](https://github.com/opencontainers/image-spec/blob/master/annotations.md#pre-defined-annotation-keys) applied. Containizen populates with information relevant to its generated base image only. Annotations should be overwritten when extending / using.
@@ -86,3 +85,4 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Safe / Functional way of removing `pip` from Python image.
 - Goss automatic validation if `goss.yaml` present via S6
 - Other Languages
+- Strip Locale's from built container for non-used languages (~15Mb space reduction)
