@@ -1,6 +1,6 @@
 { buildInfo
 , language
-, pkgs ? import <nixpkgs> {}
+, pkgs
 }:
 let
   commonPkgs = pkgs.callPackage ../common-pkgs.nix { inherit pkgs; };

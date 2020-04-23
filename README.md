@@ -76,6 +76,8 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 
 [Vulnix](https://github.com/flyingcircusio/vulnix) is used for scanning. Checks against NIST, although others databases can also be used. A current vulnerability list is maintained against each assembled container. For security reasons the list is *not* embedded within the assembled container. Vulnerabilities are uploaded as artifacts against the relevant [GitHub Action build](https://github.com/foggyubiquity/containizen/actions). The whitelist excludes items required for building the container that are verified as *not* included in the final result.
 
+**NOTE**: `BASH` may occasionally be listed as a vulnerability, *NIX* requires `BASH` to operate `stdenv` as such it is pushed into all containers. *However* `BASH` is **not** executable from within the container as it is not *symlinked* & installed in a rotating transitory location. As such `BASH` is typically considered a *false-positive*.
+
 ## Gotchas
 
 - Read-Only File-System compatible. `/tmp` & `/var` are both volumes & expect `tmpfs` File-Systems to be mounted. While its possible to run this without Read-Only set, bear in mind both `/tmp` & `/var` are ephemeral. These should be mounted at runtime via `TMPFS` (Docker) or `emptyDir` (in Kubernetes)
@@ -90,3 +92,4 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Goss automatic validation if `goss.yaml` present via S6
 - Other Languages
 - Strip Locale's from built container for non-used languages (~15Mb space reduction)
+- CVE False Positive cleanup
