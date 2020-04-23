@@ -1,5 +1,7 @@
 name: rebuild containizen
 on:
+  check_suite:
+    type: [ 'completed' ]
   push:
     branches:
       - master
