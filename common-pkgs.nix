@@ -12,6 +12,5 @@ in
   # Alternatives to nologin are 'su' and 'shadow' (full suite)
   nixpkgs = with pkgs; [ coreutils nologin jq gnugrep ];
 
-  # localpkgs = [ goss s6-overlay ];
-  localpkgs = [ s6-overlay ];
+  localpkgs = [ goss s6-overlay ];
 }

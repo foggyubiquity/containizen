@@ -44,7 +44,7 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} --argstr vulnix true languages/node.nix
-      - run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist ./vulnix/build.whitelist ./result'
+      - run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist ./vulnix/build.whitelist ./result > vulnerabilities.txt' | true
       - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} languages/node.nix && cp result containizen.tar.gz
       - uses: actions-hub/docker@master
         with:
