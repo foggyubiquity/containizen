@@ -4,7 +4,9 @@ FROM nixorg/nix:latest as nix
 COPY --from=makisu /makisu-internal /makisu-internal
 
 RUN nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-RUN nix-channel --update
+# Stability Fix: --update can timeout on GitHub Actions as build doesn't use default nixpkgs channel this isn't critical
+# when using this container interactively it is important to update the channels
+# RUN nix-channel --update
 
 # Alias commonly used alternate names
 # Symlinks are still valid in NixOS & prevent file duplication / image bloat
