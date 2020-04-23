@@ -1,9 +1,10 @@
 { ver ? null
 , pkgs ? import (
-    fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
+    fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
   ) { config = { allowUnfree = true; }; }
+, pkgsPinned ? "nixpkgs-unstable"
+, vulnix ? null
 }:
-
 let
   #######################
   # Configuration       #
@@ -27,6 +28,8 @@ let
   #######################
   # Build Image Code    #
   #######################
-
 in
-pkgs.callPackage ../common.nix { inherit buildInfo pkgs language; }
+if vulnix == null then
+  pkgs.callPackage ../common.nix { inherit buildInfo pkgs language; }
+else
+  pkgs.callPackage ../vulnix/default.nix { inherit buildInfo pkgs language; }
