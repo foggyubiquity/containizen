@@ -4,10 +4,10 @@
 }:
 let
   path = "PATH=/usr/bin:/bin:${goss}/bin:${language.pkg}/bin";
-  start = builtins.readFile ./auto-start-language;
+  start = builtins.readFile ../auto-start-language;
 
-  goss = pkgs.callPackage ./pkgs/goss.nix {};
-  commonPkgs = pkgs.callPackage ./common-pkgs.nix { inherit pkgs; };
+  goss = pkgs.callPackage ../pkgs/goss.nix {};
+  commonPkgs = pkgs.callPackage ./pkgs.nix { inherit pkgs; };
 in
   #######################
   # Build Image Code    #

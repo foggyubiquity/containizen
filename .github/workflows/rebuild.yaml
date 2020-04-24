@@ -47,7 +47,7 @@ jobs:
       - run: nix-build --cores 0 base.nix
       - run: "nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
       # Generate Container
-      - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} --argstr vulnix true languages/node.nix
+      - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} --argstr vulnix true languages/node
       # Scan for CVEs
       - run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt' | true
       - run: nix-build --cores 0 --argstr ver ${{ matrix.version }} languages/node.nix && cp result containizen.tar.gz

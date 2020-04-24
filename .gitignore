@@ -5,4 +5,5 @@ result*
 /Session.vim
 scratchpad*
 /tags
-vulnerabilities
+vulnerabilities.txt
+*.whitelist

@@ -5,7 +5,7 @@
 }:
 let
   s6-overlay = pkgs.callPackage ./pkgs/s6-overlay.nix {};
-  imgConfig = import ./config.nix { inherit pkgs; };
+  imgConfig = import ./common/config.nix { inherit pkgs; };
 in
 pkgs.dockerTools.buildLayeredImage {
   name = "foggyubiquity/containizen";
