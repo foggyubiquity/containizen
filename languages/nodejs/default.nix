@@ -6,6 +6,7 @@
 , pkgsPinned ? "nixpkgs-unstable"
 , vulnix ? null
 , next ? null
+, ...
 }:
 let
   #######################
