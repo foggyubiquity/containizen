@@ -5,6 +5,7 @@
   ) { config = { allowUnfree = true; }; }
 , pkgsPinned ? "nixpkgs-unstable"
 , vulnix ? null
+, next ? null
 }:
 let
   #######################
@@ -18,7 +19,7 @@ let
       inherit language pkgs withNPM;
     };
     name = "foggyubiquity/containizen";
-    tag = if ver == null then "nodejs${language.npm}" else "nodejs${ver}${language.npm}";
+    tag = if next == null then "nodejs${language.npm}" else "nodejs-next${language.npm}";
   };
 
   language = {

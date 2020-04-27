@@ -8,8 +8,12 @@ ifelse
 ifelse
 { test -e package.json }
 {
-	redirfd -r 0 package.json
-	jq .scripts.start
+	backtick EXEC {
+		redirfd -r 0 package.json
+		jq -r .scripts.start
+	}
+	importas -nsu EXEC EXEC
+	exec \$EXEC
 }
 
 ifelse
@@ -22,8 +26,8 @@ ifelse
 		pipeline { cut -d"\"" -f2 }
 		cut -d"'" -f2
 	}
-	importas -u EXEC EXEC
-	exec $EXEC
+	importas -nsu EXEC EXEC
+	exec \$EXEC
 }
 
 background {

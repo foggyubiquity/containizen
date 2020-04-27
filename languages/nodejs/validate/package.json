@@ -1,0 +1,11 @@
+{
+  "name": "containizen",
+  "version": "1.0.0",
+  "description": "Validation of 'Hello World'",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Unlicense"
+}
