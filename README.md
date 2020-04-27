@@ -19,7 +19,17 @@ Should arguments be supplied to `CMD` they will override this autostart function
 
 ### NodeJS
 
-* NPM is unnecessary for production code execution & creates a significant attack footprint. NPM is omitted from the container.
+| tag | version | usage |
+| --- | --- | --- |
+| nodejs | v10.x | production |
+| nodejs-v10 | v10.x | production |
+| nodejs-v12 | v12.x | production |
+| nodejs-npm | v10.x | development |
+| nodejs-v10-npm | v10.x + npm | development |
+| nodejs-v12-npm | v12.x + npm | development |
+
+* standard version *nodejs* rolls forward when *NixPkgs* drops support for older versions
+* NPM is unnecessary for production code execution & creates a significant attack footprint. NPM is omitted from the container by default, use *-npm* tag if you need it
 * *Auto Start*: scans `package.json` for `scripts.start` & executes the value.
 
 ### Python
@@ -89,7 +99,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Cache nix/store in GitHub Actions
 - Safe / Functional way of removing `pip` from Python image.
-- Goss automatic validation if `goss.yaml` present via S6
+- Goss automatic execution if `goss.yaml` present via S6
+- Goss Build Validation
 - Other Languages
 - Strip Locale's from built container for non-used languages (~15Mb space reduction)
-- CVE False Positive cleanup
