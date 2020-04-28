@@ -1,12 +1,10 @@
 { language
 , pkgs
 }:
-
 let
-  common = import ../config.nix {
+  common = import ../../common/config.nix {
     inherit pkgs;
   };
-
 in
 common // {
   ExposedPorts = common.ExposedPorts // {

@@ -17,13 +17,74 @@ These images are lightweight by design with the following features:
 These images contain automatic start capabilities in accordance with each language's best practice.
 Should arguments be supplied to `CMD` they will override this autostart functionality automatically.
 
+NOTE: `RUN` should *never* be used in `Dockerfile`(s) as it places a hard requirement on Docker being present in the build pipeline. Preventing powerful tools such as `Kaniko` & `Makisu` from leveraging Kubernetes for builds. Containizen images utilize approaches that do *not* require `RUN`.
+
 ### NodeJS
 
-* NPM is unnecessary for production code execution & creates a significant attack footprint. NPM is omitted from the container.
+#### Versions
+
+Maintained as per [Release / LTS Information](https://nodejs.org/en/about/releases/)
+
+| tag | version | usage |
+| --- | --- | --- |
+| nodejs | v10.x | production |
+| nodejs-v10 | v10.x | production |
+| nodejs-v12 | v12.x | production |
+| nodejs-npm | v10.x | development |
+| nodejs-v10-npm | v10.x + npm | development |
+| nodejs-v12-npm | v12.x + npm | development |
+
+#### Production Usage
+
+```dockerfile
+ARG version=nodejs
+FROM foggyubiquity/containizen:$version AS base
+
+# node_modules should already be populated by running
+# $> NODE_ENV=production npm ci
+COPY . /opt/app
+```
+
+#### Notes
+
+* standard version *nodejs* rolls forward when *NixPkgs* drops support for older versions
+* NPM is unnecessary for production code execution & creates a significant attack footprint. NPM is omitted from the container by default, use *-npm* tag if you need it
 * *Auto Start*: scans `package.json` for `scripts.start` & executes the value.
 
 ### Python
 
+#### Versions
+
+* Maintained in alignment with bugfix branches per [Status of Python Branches](https://devguide.python.org/#status-of-python-branches)
+* For advice about [when to switch versions](https://pythonspeed.com/articles/major-python-release/)
+
+| tag | version | usage |
+| --- | --- | --- |
+| python | v3.7.x | production |
+| python-v37 | v3.7.x | production |
+| python-v38 | v3.8.x | production |
+| python-pip | v3.7.x | development |
+| python-v37-pip | v3.7.x | development |
+| python-v38-pip | v3.8.x | development |
+
+#### Production Usage
+
+```dockerfile
+ARG version=python
+FROM foggyubiquity/containizen:$version AS base
+
+COPY . /opt/app
+```
+
+#### Notes
+
+* **Python** has [many ways of packaging](https://stackoverflow.com/a/14753678), however most approaches expect an installation against the actual operating system & architecture, not a portable package-manager free install.
+* *Wheel & Egg* are unsuitable as they require `pip install` & `RUN` in a DockerFile
+* *Virtual Environments* are unnecessary redundancy when using Containers
+* [*shiv* from LinkedIn](https://github.com/linkedin/shiv) provides as *fast* **zipapp** solution for reproducible builds. While this can be independent of Containers it also provides a safe bundling approach.
+* 
+
+* [**NixPkgs** information](https://nixos.org/nixpkgs/manual/#python) about how *Python* is integrated & used (without containers). Specifically read: *15.17.2.2.2. buildPythonApplication function* for help in extending these base images via *NixPkgs*
 * Itamar has some excellent suggestions https://pythonspeed.com/articles/pipenv-docker/ for running Python within a container.
 * `requirements.in` & `requirements.txt` should generally be used in images
 * `pip-tools` as part of the development workflow
@@ -89,7 +150,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Cache nix/store in GitHub Actions
 - Safe / Functional way of removing `pip` from Python image.
-- Goss automatic validation if `goss.yaml` present via S6
+- Goss automatic execution if `goss.yaml` present via S6
+- Goss Build Validation
 - Other Languages
 - Strip Locale's from built container for non-used languages (~15Mb space reduction)
-- CVE False Positive cleanup

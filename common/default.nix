@@ -3,11 +3,12 @@
 , pkgs
 }:
 let
-  path = "PATH=/usr/bin:/bin:${goss}/bin:${language.pkg}/bin";
-  start = builtins.readFile ./auto-start-language;
+  # path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${goss}/bin:${language.pkg}/bin";
+  path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
+  start = builtins.readFile ../auto-start-language;
 
-  goss = pkgs.callPackage ./pkgs/goss.nix {};
-  commonPkgs = pkgs.callPackage ./common-pkgs.nix { inherit pkgs; };
+  goss = pkgs.callPackage ../pkgs/goss.nix {};
+  commonPkgs = pkgs.callPackage ./pkgs.nix { inherit pkgs; };
 in
   #######################
   # Build Image Code    #
@@ -15,9 +16,11 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = buildInfo.name;
   tag = buildInfo.tag;
-  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ buildInfo.packages;
+  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ [ language.extra.pkgs ] ++ buildInfo.packages;
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
-  config = buildInfo.config;
+  config = buildInfo.config // {
+    Env = buildInfo.config.Env ++ [ path ];
+  };
   extraCommands = ''
     # User Permissions
     mkdir -p ./opt/app ./root ./home/containizen ./etc/pam.d

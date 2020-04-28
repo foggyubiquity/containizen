@@ -5,4 +5,10 @@ result*
 /Session.vim
 scratchpad*
 /tags
-vulnerabilities
+vulnerabilities.txt
+*.whitelist
+/languages/python/validate/containizen
+/languages/python/validate/pkgs
+.venv
+__pycache__
+

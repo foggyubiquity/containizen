@@ -3,7 +3,7 @@
 , pkgs
 }:
 let
-  commonPkgs = pkgs.callPackage ../common-pkgs.nix { inherit pkgs; };
+  commonPkgs = pkgs.callPackage ./common/pkgs.nix { inherit pkgs; };
 in
 pkgs.stdenv.mkDerivation {
 
