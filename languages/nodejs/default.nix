@@ -23,10 +23,15 @@ let
   };
 
   language = {
-    toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
+    extra =
+      {
+        pkgs = [];
+        paths = "";
+      };
+    npm = if withNPM == "true" then "-npm" else "";
     pkg = pkgs.${language.toNix};
     slim = if withNPM == "false" then "-slim" else "";
-    npm = if withNPM == "true" then "-npm" else "";
+    toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
   };
 
   #######################

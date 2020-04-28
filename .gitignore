@@ -7,3 +7,8 @@ scratchpad*
 /tags
 vulnerabilities.txt
 *.whitelist
+/languages/python/validate/containizen
+/languages/python/validate/pkgs
+.venv
+__pycache__
+

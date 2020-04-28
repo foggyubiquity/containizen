@@ -4,7 +4,7 @@
 }:
 let
   # path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${goss}/bin:${language.pkg}/bin";
-  path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${language.pkg}/bin";
+  path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
   start = builtins.readFile ../auto-start-language;
 
   goss = pkgs.callPackage ../pkgs/goss.nix {};
@@ -16,7 +16,7 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = buildInfo.name;
   tag = buildInfo.tag;
-  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ buildInfo.packages;
+  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ [ language.extra.pkgs ] ++ buildInfo.packages;
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
   config = buildInfo.config // {
     Env = buildInfo.config.Env ++ [ path ];

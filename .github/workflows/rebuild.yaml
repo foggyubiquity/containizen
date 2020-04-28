@@ -52,7 +52,7 @@ jobs:
         run: nix-build --cores 0 --argstr ver ${{ matrix.version }} languages/nodejs && mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && mv $(realpath result) artifacts/containizen.tar.gz && ls -lart artifacts
       # With NPM
       - name: +NPM Dependency Tree
-        run: nix-build --cores 0 --argstr withNPM true  --argstr ver ${{ matrix.version }} --argstr vulnix true languages/nodejs
+        run: nix-build --cores 0 --argstr withNPM true --argstr ver ${{ matrix.version }} --argstr vulnix true languages/nodejs
       - name: +NPM Vulnerabilities Scan (OS Only)
         run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt' | true
       - name: +NPM Create Container
@@ -113,3 +113,99 @@ jobs:
       - if: matrix.rolling == true
         name: Upload NPM rolling
         run: docker push foggyubiquity/containizen:nodejs-npm
+  Python:
+    needs: [ makisu ]
+    runs-on: ubuntu-latest
+    container:
+      image: docker://foggyubiquity/containizen:makisu
+      volumes:
+        - nix:/nix
+    strategy:
+      matrix:
+        version: [ 37 ]
+        include:
+          - ver: 37
+            rolling: true
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      # Generate Whitelist
+      - name: Build Base
+        run: nix-build --cores 0 base.nix
+      - name: Construct Vulnerabilities Whitelist
+        run: "nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
+      - name: Generate Dependency Tree
+        run: nix-build --cores 0 --argstr ver ${{ matrix.version }} --argstr vulnix true languages/python
+      - name: Scan for Vulnerabilities
+        run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt' | true
+      - name: Create Container
+        run: nix-build --cores 0 --argstr ver ${{ matrix.version }} languages/python && mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && mv $(realpath result) artifacts/containizen.tar.gz && ls -lart artifacts
+      # With PIP
+      - name: +PIP Dependency Tree
+        run: nix-build --cores 0 --argstr withPIP true --argstr ver ${{ matrix.version }} --argstr vulnix true languages/python
+      - name: +PIP Vulnerabilities Scan (OS Only)
+        run: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p vulnix --run 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt' | true
+      - name: +PIP Create Container
+        run: nix-build --cores 0 --argstr withPIP true --argstr ver ${{ matrix.version }} languages/python && mkdir -p artifacts && mv vulnerabilities.txt artifacts/withPIP-vulnerabilities.txt && mv $(realpath result) artifacts/withPIP-containizen.tar.gz && ls -lart artifacts
+      - name: Build Hello World
+        run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/usr/bin/env python3\" --console-script main --output-file containizen --site-packages pkgs .' && mv containizen ../../../artifacts/hello"
+      - uses: actions/upload-artifact@v1
+        with:
+          name: python-v${{ matrix.version }}
+          path: artifacts
+  vPython:
+    needs: [ python ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        version: [ 37 ]
+        include:
+          - version: 37
+            rolling: true
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v1
+        with:
+          name: python-v${{ matrix.version }}
+          path: artifacts/python-v${{ matrix.version }}
+      - name: Load python-v${{ matrix.version }}
+        run: docker load -i artifacts/python-v${{ matrix.version }}/containizen.tar.gz
+      - name: Load python-v${{ matrix.version }}-pip
+        run: docker load -i artifacts/python-v${{ matrix.version }}/withPIP-containizen.tar.gz
+      - name: Place 'Hello World' in correct location
+        run: mv artifacts/python-v${{ matrix.version }}/hello/containizen languages/python/validate
+      - name: Construct python-v${{ matrix.version }} test container
+        run: docker build --build-arg version=python-v${{ matrix.version }} -t foggyubiquity/containizen:test languages/python/validate/
+      - name: Construct python-v${{ matrix.version }}-pip test container
+        run: docker build --build-arg version=python-v${{ matrix.version }} -t foggyubiquity/containizen:test-pip languages/python/validate/
+      - name: Validate python-v${{ matrix.version }}
+        run: "docker run foggyubiquity/containizen:test | grep \"Hello, world!\""
+      - name: Validate python-v${{ matrix.version }}-pip
+        run: "docker run foggyubiquity/containizen:test-pip | grep \"Hello, world!\""
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Upload python-v${{ matrix.version }}
+        run: docker push foggyubiquity/containizen:python-v${{ matrix.version }}
+      - if: matrix.rolling == true
+        name: Tag rolling from python-v${{ matrix.version }}
+        run: docker tag foggyubiquity/containizen:python-v${{ matrix.version }} foggyubiquity/containizen:python
+      - if: matrix.rolling == true
+        name: Upload rolling
+        run: docker push foggyubiquity/containizen:python
+      - name: Upload python-v${{ matrix.version }}-pip
+        run: docker push foggyubiquity/containizen:python-v${{ matrix.version }}-pip
+      - if: matrix.rolling == true
+        name: Tag PIP rolling from python-v${{ matrix.version }}-pip
+        run: docker tag foggyubiquity/containizen:python-v${{ matrix.version }}-pip foggyubiquity/containizen:python-pip
+      - if: matrix.rolling == true
+        name: Upload PIP rolling
+        run: docker push foggyubiquity/containizen:python-pip
+

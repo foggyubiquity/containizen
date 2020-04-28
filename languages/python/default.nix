@@ -1,4 +1,5 @@
 { ver ? null
+, withPIP ? "false"
 , pkgs ? import (
     fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
   ) { config = { allowUnfree = true; }; }
@@ -17,12 +18,22 @@ let
       inherit language pkgs;
     };
     name = "foggyubiquity/containizen";
-    tag = if ver == null then "python3" else "python${ver}";
+    tag = "python-v${ver}${language.pip}";
   };
 
   language = {
-    toNix = if ver == null then "python3" else "python${ver}";
+    extra =
+      {
+        pythonPackages = pkgs.${language.extra.pythonVer};
+        pkgs = with language.extra.pythonPackages; [ pip ];
+        pythonVer = "python${ver}Packages";
+        paths = with language.extra.pythonPackages; ":${pip}/bin";
+      };
+    pip = if withPIP == "true" then "-pip" else "";
     pkg = pkgs.${language.toNix};
+    # TODO python3Minimal is the only one available in NixPkgs, pinned to 3.7. It should be extended to allow newer version
+    # toNix = if withPIP == "false" then "python${ver}Minimal" else "python${ver}Full";
+    toNix = if withPIP == "false" then "python3Minimal" else "python${ver}Full";
   };
 
   #######################
