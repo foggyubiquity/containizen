@@ -19,7 +19,7 @@ ifelse
 ifelse
 { test -e setup.py }
 {
-	backtick EXEC {
+	backtick -n EXEC {
 		# -P failing to work correctly with grep
 		# pipeline { grep -P "name\s?=\s?\W\w*\W?" ./setup.py }
 		pipeline { grep "name=" ./setup.py }
