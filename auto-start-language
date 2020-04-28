@@ -19,7 +19,7 @@ ifelse
 ifelse
 { test -e setup.py }
 {
-	backtick -n EXEC {
+	backtick EXEC {
 		# -P failing to work correctly with grep
 		# pipeline { grep -P "name\s?=\s?\W\w*\W?" ./setup.py }
 		pipeline { grep "name=" ./setup.py }
@@ -27,7 +27,9 @@ ifelse
 		cut -d"'" -f2
 	}
 	importas -nsu EXEC EXEC
-	exec \$EXEC
+	pipeline { chmod +x \$EXEC }
+	# zipapps *require* a shell due to !# (shebang) usage
+	exec bash -c "./\\\$EXEC"
 }
 
 background {

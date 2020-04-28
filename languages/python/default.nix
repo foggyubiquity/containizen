@@ -27,7 +27,8 @@ let
         pythonPackages = pkgs.${language.extra.pythonVer};
         pkgs = with language.extra.pythonPackages; [ pip ];
         pythonVer = "python${ver}Packages";
-        paths = with language.extra.pythonPackages; ":${pip}/bin";
+        # TODO: push the bash path into a strategic file so docker run xxxx bash cannot easily happen in production
+        paths = ":${pkgs.bash}/bin" + (if withPIP == "true" then with language.extra.pythonPackages; ":${pip}/bin" else "");
       };
     pip = if withPIP == "true" then "-pip" else "";
     pkg = pkgs.${language.toNix};

@@ -26,7 +26,7 @@ let
     extra =
       {
         pkgs = [];
-        paths = "";
+        paths = if withNPM == "true" then ":${pkgs.bash}/bin" else "";
       };
     npm = if withNPM == "true" then "-npm" else "";
     pkg = pkgs.${language.toNix};

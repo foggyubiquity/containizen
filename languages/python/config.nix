@@ -10,7 +10,7 @@ common // {
   ExposedPorts = common.ExposedPorts // {
     # "<port>/<tcp|udp>": {}
   };
-  Env = common.Env ++ [];
+  Env = common.Env ++ [ "SHIV_ROOT=/tmp" ];
   # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
   Cmd = [];
   Labels = common.Labels // {

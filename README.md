@@ -45,6 +45,10 @@ FROM foggyubiquity/containizen:$version AS base
 COPY . /opt/app
 ```
 
+#### Detailed Example
+
+[languages/nodejs/validate](./languages/nodejs/validate)
+
 #### Notes
 
 * standard version *nodejs* rolls forward when *NixPkgs* drops support for older versions
@@ -76,21 +80,18 @@ FROM foggyubiquity/containizen:$version AS base
 COPY . /opt/app
 ```
 
+#### Detailed Example
+
+[languages/python/validate](./languages/python/validate)
+
 #### Notes
 
 * **Python** has [many ways of packaging](https://stackoverflow.com/a/14753678), however most approaches expect an installation against the actual operating system & architecture, not a portable package-manager free install.
 * *Wheel & Egg* are unsuitable as they require `pip install` & `RUN` in a DockerFile
 * *Virtual Environments* are unnecessary redundancy when using Containers
 * [*shiv* from LinkedIn](https://github.com/linkedin/shiv) provides as *fast* **zipapp** solution for reproducible builds. While this can be independent of Containers it also provides a safe bundling approach.
-* 
-
-* [**NixPkgs** information](https://nixos.org/nixpkgs/manual/#python) about how *Python* is integrated & used (without containers). Specifically read: *15.17.2.2.2. buildPythonApplication function* for help in extending these base images via *NixPkgs*
-* Itamar has some excellent suggestions https://pythonspeed.com/articles/pipenv-docker/ for running Python within a container.
-* `requirements.in` & `requirements.txt` should generally be used in images
-* `pip-tools` as part of the development workflow
-* `setuptools` can be useful for installing the developed application https://chriswarrick.com/blog/2014/09/15/python-apps-the-right-way-entry_points-and-scripts/
-* `pip` to actually install requirements & application in the container via `requirements.txt` & `setup.py`
-* *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `python -m xxxx`
+* `pip-tools` provides a well-respected hash & pinning ability for PyPi packages / requirements
+* *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `./xxxx` as per *shiv* specification & [PEP 441](http://legacy.python.org/dev/peps/pep-0441/)
 
 ## Validation
 
@@ -143,7 +144,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 
 - Read-Only File-System compatible. `/tmp` & `/var` are both volumes & expect `tmpfs` File-Systems to be mounted. While its possible to run this without Read-Only set, bear in mind both `/tmp` & `/var` are ephemeral. These should be mounted at runtime via `TMPFS` (Docker) or `emptyDir` (in Kubernetes)
 - `/bin/sh` or `/bin/bash` are not available by default. *sh* is not cross-architecture compatible & introduces security issues. To comply with Cloud Native _(executable containers for any architecture)_ `execlineb` as part of `Skarnet S6` is used. For more information on `sh` issues & challenges see [Skarnet's Post](https://skarnet.org/software/execline/dieshdiedie.html). For more information about using `execlineb` easily see [Just Containers Explainer](https://github.com/just-containers/s6-overlay#executing-initialization-andor-finalization-tasks) or [Danny Spinellas's Getting Started](https://danyspin97.org/blog/getting-started-with-execline-scripting/)
-- `root` is required for S6, but privileges are dropped for application execution. A default user `containizen` of uid:289, gid:328 is available. Additional users & groups can be added via the standard `useradd` & `groupadd` commands
+- `root` is required for S6, but privileges are [irreversibly dropped](https://jdebp.eu/FGA/dont-abuse-su-for-dropping-privileges.html) for application execution. A default user `containizen` of uid:289, gid:328 is available. Additional users & groups can be added via the standard `useradd` & `groupadd` commands
 
 ## Further Work (PR Welcome)
 
@@ -154,3 +155,6 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Goss Build Validation
 - Other Languages
 - Strip Locale's from built container for non-used languages (~15Mb space reduction)
+- *Python3xMinimal* is not available currently in NixPkgs, the default *Python3Minimal* binds to Python 3.7. A pull request could be raised to enable more flexible minimal installs (and save compiling Python within this project)
+- *Python* pip & language are isolated in *-pip images - multi-link and share
+- Enable `act` to prevent necessity of *git push* for debugging actions

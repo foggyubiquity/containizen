@@ -4,7 +4,8 @@
 }:
 let
   # path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${goss}/bin:${language.pkg}/bin";
-  path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
+  # Nix - root - Specific Paths (to avoid confusion in mappings)
+  path = "PATH=/usr/bin:/sbin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
   start = builtins.readFile ../auto-start-language;
 
   goss = pkgs.callPackage ../pkgs/goss.nix {};
