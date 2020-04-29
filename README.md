@@ -157,3 +157,4 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Strip Locale's from built container for non-used languages (~15Mb space reduction)
 - *Python3xMinimal* is not available currently in NixPkgs, the default *Python3Minimal* binds to Python 3.7. A pull request could be raised to enable more flexible minimal installs (and save compiling Python within this project)
 - *Python* pip & language are isolated in *-pip images - multi-link and share
+- *Python* pip container is buggy on GitHub actions, but compiles locally & via act - need to identify the delta for this development container

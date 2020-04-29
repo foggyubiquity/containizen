@@ -138,14 +138,15 @@ jobs:
     strategy:
       matrix:
         version: [ 37 ]
-        pkgManager: [ "none", "bundled" ]
+        # pkgManager: [ "none", "bundled" ]
+        pkgManager: [ "none" ]
         language: [ "python" ]
         include:
           - version: 37
             rolling: true
-          - language: "python"
-            pkgManager: "bundled"
-            pkgManagerName: "-pip"
+          # - language: "python"
+          #   pkgManager: "bundled"
+          #   pkgManagerName: "-pip"
     steps:
       - uses: actions/checkout@v1
         # Individual IF's added as currently no global or matrix manipulation for 'act'
@@ -203,9 +204,9 @@ jobs:
         include:
           - version: 37
             rolling: true
-          - language: "python"
-            pkgManager: "bundled"
-            pkgManagerName: "-pip"
+          # - language: "python"
+          #   pkgManager: "bundled"
+          #   pkgManagerName: "-pip"
     steps:
       ## Start: Copy Paste ##
       - uses: actions/checkout@v1
