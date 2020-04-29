@@ -8,6 +8,7 @@
 
 with pkgs; with python3Packages;
 let
+  re-act = callPackage ./pkgs/act.nix {};
 in
 mkShell rec
 {
@@ -28,7 +29,7 @@ mkShell rec
     # Normal NixPkgs
     execline
     nodejs
-    act
+    re-act
   ];
 
   # Now we can execute any commands within the virtual environment.

@@ -1,5 +1,5 @@
 { language
-, withNPM ? "false"
+, pkgManager
 , pkgs
 }:
 let
@@ -16,12 +16,12 @@ common // {
     "NODE_PATH=/node_modules"
     "NODE_ENV=production"
   ] ++ (
-    if withNPM == "true"
+    if pkgManager == "bundled"
     then [ "S6_CMD_ARG0=\"\"" ]
     else []
   );
   # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
-  Cmd = if withNPM == "true"
+  Cmd = if pkgManager == "bundled"
   then [
     # Full NodeJS version also contains NPM, strictly not necessary for production deployments
     "${language.pkg}/bin/npm"

@@ -8,6 +8,9 @@ RUN nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 # when using this container interactively it is important to update the channels
 # RUN nix-channel --update
 
+# GitHub Act(or) - local - patch
+RUN ln -s /bin/tail /usr/bin/tail
+
 # Alias commonly used alternate names
 # Symlinks are still valid in NixOS & prevent file duplication / image bloat
 # NOTE: nix-channel --update will remove these symlinks as channel link increases in number

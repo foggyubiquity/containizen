@@ -1,5 +1,5 @@
 { ver ? null
-, withNPM ? "false"
+, pkgManager ? "none"
 , pkgs ? import (
     fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
   ) { config = { allowUnfree = true; }; }
@@ -16,7 +16,7 @@ let
     packages = [];
     # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
     config = import ./config.nix {
-      inherit language pkgs withNPM;
+      inherit language pkgs pkgManager;
     };
     name = "foggyubiquity/containizen";
     tag = "nodejs-v${ver}${language.npm}";
@@ -26,11 +26,11 @@ let
     extra =
       {
         pkgs = [];
-        paths = if withNPM == "true" then ":${pkgs.bash}/bin" else "";
+        paths = if pkgManager == "bundled" then ":${pkgs.bash}/bin" else "";
       };
-    npm = if withNPM == "true" then "-npm" else "";
+    npm = if pkgManager == "bundled" then "-npm" else "";
     pkg = pkgs.${language.toNix};
-    slim = if withNPM == "false" then "-slim" else "";
+    slim = if pkgManager == "none" then "-slim" else "";
     toNix = if ver == null then "nodejs${language.slim}" else "nodejs${language.slim}-${ver}_x";
   };
 

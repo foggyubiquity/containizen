@@ -8,15 +8,13 @@
     fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
   ) { config = { allowUnfree = true; }; }
 }:
-
 let
-
   #######################
   # Configuration       #
   #######################
 
   configCommon = import ./example-config.nix {
-    inherit language pkgs withNPM;
+    inherit language pkgs pkgManager;
   };
 
   buildInfo = {
@@ -44,7 +42,6 @@ let
   #######################
   # Build Image Code    #
   #######################
-
 in
   # TODO switch to buildLayeredImage to optimize caching, requires merging the two images
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/docker/default.nix contains all available attributes.
