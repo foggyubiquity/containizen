@@ -78,7 +78,8 @@ ARG version=python
 FROM foggyubiquity/containizen:$version AS base
 
 # .pyz compatible file should already be generated
-COPY . /opt/app
+# Any file *.pyz will auto trigger Python execution
+COPY containizen.pyz /opt/app/
 ```
 
 #### Detailed Example
@@ -116,6 +117,16 @@ Maintained per [Release / LTS Information](https://adoptopenjdk.net/support.html
 | graal | v19.x | unavailable - waiting for NixPkgs support |
 | graal-v19 | v19.x | unavailable - waiting for NixPkgs support |
 
+#### Production Usage
+
+```dockerfile
+ARG version=java
+FROM foggyubiquity/containizen:$version AS base
+
+# .jar compatible file should already be generated
+# Any file *.jar will auto trigger Python execution
+COPY containizen.jar /opt/app/
+```
 #### Detailed Example
 
 [languages/java/validate](./languages/java/validate)
@@ -177,6 +188,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - Read-Only File-System compatible. `/tmp` & `/var` are both volumes & expect `tmpfs` File-Systems to be mounted. While its possible to run this without Read-Only set, bear in mind both `/tmp` & `/var` are ephemeral. These should be mounted at runtime via `TMPFS` (Docker) or `emptyDir` (in Kubernetes)
 - `/bin/sh` or `/bin/bash` are not available by default. *sh* is not cross-architecture compatible & introduces security issues. To comply with Cloud Native _(executable containers for any architecture)_ `execlineb` as part of `Skarnet S6` is used. For more information on `sh` issues & challenges see [Skarnet's Post](https://skarnet.org/software/execline/dieshdiedie.html). For more information about using `execlineb` easily see [Just Containers Explainer](https://github.com/just-containers/s6-overlay#executing-initialization-andor-finalization-tasks) or [Danny Spinellas's Getting Started](https://danyspin97.org/blog/getting-started-with-execline-scripting/)
 - `root` is required for S6, but privileges are [irreversibly dropped](https://jdebp.eu/FGA/dont-abuse-su-for-dropping-privileges.html) for application execution. A default user `containizen` of uid:289, gid:328 is available. Additional users & groups can be added via the standard `useradd` & `groupadd` commands
+- Linux Core Utilities are *not* present, S6 equivalents are, in most cases adding `s6-` will trigger the similar command
 
 ## Further Work (PR Welcome)
 
@@ -190,4 +202,5 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - *Python3xMinimal* is not available currently in NixPkgs, the default *Python3Minimal* binds to Python 3.7. A pull request could be raised to enable more flexible minimal installs (and save compiling Python within this project)
 - *Python* pip & language are isolated in *-pip images - multi-link and share
 - *Python* pip container is buggy on GitHub actions, but compiles locally & via act - need to identify the delta for this development container
-- *Python* language detection recognize *.pyz file and execute over scanning setup.py (pushes need for `gnugrep` back to only development container)
+- *Python* (optional) venv support - slower than *shiv*
+- *NodeJS* Binary executable detection

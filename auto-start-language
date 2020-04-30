@@ -2,11 +2,11 @@
 
 # NOTE: \$ is necessary as nixpkgs is passing this text file through a bash shell environment when writing to container
 ifelse
-{ test \$# -gt 0 }
+{ s6-test \$# -gt 0 }
 { exec \$@ }
 
 ifelse
-{ test -e package.json }
+{ s6-test -e package.json }
 {
 	backtick EXEC {
 		redirfd -r 0 package.json
@@ -17,17 +17,26 @@ ifelse
 }
 
 ifelse
-{ test -e setup.py }
+{
+	pipeline { s6-ls . }
+	s6-grep -q ".pyz"
+}
 {
 	backtick EXEC {
+		#### NOTE: Legacy code ####
 		# -P failing to work correctly with grep
 		# pipeline { grep -P "name\s?=\s?\W\w*\W?" ./setup.py }
-		pipeline { grep "name=" ./setup.py }
-		pipeline { cut -d"\"" -f2 }
-		cut -d"'" -f2
+		###########################
+		#### NOTE: Legacy code ####
+		# pipeline { grep "name=" ./setup.py }
+		# pipeline { cut -d"\"" -f2 }
+		# cut -d"'" -f2
+		###########################
+		pipeline { s6-ls . }
+		s6-grep ".pyz"
 	}
 	importas -nsu EXEC EXEC
-	pipeline { chmod +x \$EXEC }
+	pipeline { s6-chmod 550 \$EXEC }
 	# zipapps *require* a shell due to !# (shebang) usage
 	exec bash -c "./\\\$EXEC"
 }
@@ -47,7 +56,7 @@ ifelse
 }
 
 background {
-	echo "ERROR: No language detected - specify CMD manually"
+	s6-echo "ERROR: No language detected - specify CMD manually"
 }
 # signal: critical OS file missing
 exit 72
