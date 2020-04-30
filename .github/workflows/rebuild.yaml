@@ -264,8 +264,11 @@ jobs:
         with:
           fetch-depth: 1
       # Compile 'Hello World'
-      - name: Build Hello World
-        if: github.actor != 'nektos/act' || matrix.rolling == true
+      - name: Build Hello World (Java 8)
+        if: (github.actor != 'nektos/act' || matrix.rolling == true) && matrix.version == 8
+        run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar cfm containizen.jar Manifest.txt HelloWorld/Main.class'
+      - name: Build Hello World (Java 11)
+        if: (github.actor != 'nektos/act' || matrix.rolling == true) && matrix.version == 11
         run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar --create --file=containizen.jar --main-class=HelloWorld.Main HelloWorld/Main.class'
       ## Start: Copy Paste ##
       - name: Build Base
