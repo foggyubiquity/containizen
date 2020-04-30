@@ -32,6 +32,20 @@ ifelse
 	exec bash -c "./\\\$EXEC"
 }
 
+ifelse
+{
+	pipeline { s6-ls . }
+	s6-grep -q ".jar"
+}
+{
+	backtick EXEC {
+		pipeline { s6-ls . }
+		s6-grep ".jar"
+	}
+	importas -nsu EXEC EXEC
+	exec java -jar \$EXEC
+}
+
 background {
 	echo "ERROR: No language detected - specify CMD manually"
 }

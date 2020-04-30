@@ -236,3 +236,112 @@ jobs:
         if: github.actor != 'nektos/act' && matrix.rolling == true
         run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
       ## End: Copy Paste ##
+  Java:
+    needs: [ makisu ]
+    runs-on: ubuntu-latest
+    container:
+      image: foggyubiquity/containizen:makisu
+      volumes:
+        - nix:/nix
+      env:
+        NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
+        NIX_BUILD: nix-build --cores 0
+    strategy:
+      matrix:
+        version: [ 8, 11 ]
+        # pkgManager: [ "none", "bundled" ]
+        pkgManager: [ "none" ]
+        language: [ "java" ]
+        include:
+          - version: 11
+            rolling: true
+          # - language: "python"
+          #   pkgManager: "bundled"
+          #   pkgManagerName: "-pip"
+    steps:
+      - uses: actions/checkout@v1
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        with:
+          fetch-depth: 1
+      # Compile 'Hello World'
+      - name: Build Hello World
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar --create --file=containizen.jar --main-class=HelloWorld.Main HelloWorld/Main.class'
+      ## Start: Copy Paste ##
+      - name: Build Base
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_BUILD} base.nix
+      - name: Construct Vulnerabilities Whitelist
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
+      - name: Generate Dependency Tree
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr vulnix true languages/${{ matrix.language }}
+      - name: Scan for Vulnerabilities
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_SHELL} vulnix --run 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt; cat vulnerabilities.txt'
+      - name: Create Container
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr pkgManager ${{ matrix.pkgManager }} languages/${{ matrix.language }}
+      - name: Construct ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} test container
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
+      - name: Validate ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: "exec ${NIX_SHELL} docker --run 'docker run foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | grep \"Hello, world!\"'"
+      - name: Bundle Artifacts
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && cp $(realpath result) artifacts/containizen.tar.gz
+      - uses: actions/upload-artifact@v1
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        with:
+          name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+          path: artifacts
+      ## End: Copy Paste ##
+  uploadJava:
+    needs: [ Java ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        version: [ 8, 11 ]
+        # pkgManager: [ "none", "bundled" ]
+        pkgManager: [ "none" ]
+        language: [ "java" ]
+        include:
+          - version: 11
+            rolling: true
+          # - language: "python"
+          #   pkgManager: "bundled"
+          #   pkgManagerName: "-pip"
+    steps:
+      ## Start: Copy Paste ##
+      - uses: actions/checkout@v1
+        if: github.actor != 'nektos/act'
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v1
+        if: github.actor != 'nektos/act'
+        with:
+          name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+          path: artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Load ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        if: github.actor != 'nektos/act'
+        run: docker load -i artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}/containizen.tar.gz
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        if: github.actor != 'nektos/act'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Upload ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        if: github.actor != 'nektos/act'
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Tag rolling
+        if: github.actor != 'nektos/act' && matrix.rolling == true
+        run: docker tag foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      - name: Upload rolling
+        if: github.actor != 'nektos/act' && matrix.rolling == true
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      ## End: Copy Paste ##

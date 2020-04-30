@@ -11,4 +11,5 @@ vulnerabilities.txt
 /languages/python/validate/pkgs
 .venv
 __pycache__
-
+*.jar
+*.class

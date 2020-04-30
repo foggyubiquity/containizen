@@ -24,9 +24,9 @@ mkShell rec
     # dropping into the shell
     venvShellHook
     pip
-    # pip-tools
 
     # Normal NixPkgs
+    adoptopenjdk-openj9-bin-11
     execline
     nodejs
     re-act

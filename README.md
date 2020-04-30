@@ -77,6 +77,7 @@ COPY . /opt/app
 ARG version=python
 FROM foggyubiquity/containizen:$version AS base
 
+# .pyz compatible file should already be generated
 COPY . /opt/app
 ```
 
@@ -92,6 +93,37 @@ COPY . /opt/app
 * [*shiv* from LinkedIn](https://github.com/linkedin/shiv) provides as *fast* **zipapp** solution for reproducible builds. While this can be independent of Containers it also provides a safe bundling approach.
 * `pip-tools` provides a well-respected hash & pinning ability for PyPi packages / requirements
 * *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `./xxxx` as per *shiv* specification & [PEP 441](http://legacy.python.org/dev/peps/pep-0441/)
+
+### Java
+
+#### Engine Information
+
+* **OpenJDK**: AdoptJDK binaries are in use as [*OpenJDK* no longer provides JRE versions](https://bugs.openjdk.java.net/browse/JDK-8200132). While we *could* bundle a JRE from individual modules, AdoptJDK is most compatible with *Quarkus* when using *OpenJ9* JVM variant. 
+* **GraalVM** is *not* expected to run in *production* containers, instead the *native-image* output should be deployed. Ironically *native-image* is currently optimized for *hotspot* over *OpenJ9*. 
+* **GraalVM** *native-image* results should be compiled directly with `nixpkgs.dockerTools.buildLayeredImage` ontop of `base.nix` in the root of this project's repo as better support is possible than using a *Base Image*
+
+#### Versions
+
+Maintained per [Release / LTS Information](https://adoptopenjdk.net/support.html)
+
+**Java** tag means: Headless Java Release Compile (JRE) of OpenJDK via AdoptOpenJDK official binaries with OpenJ9 Java Virtual Machine (JVM)
+
+| tag | version | usage |
+| --- | --- | --- |
+| java | v11.x | production |
+| java-v8 | v8.x | production |
+| java-v11 | v11.x | production |
+| graal | v19.x | unavailable - waiting for NixPkgs support |
+| graal-v19 | v19.x | unavailable - waiting for NixPkgs support |
+
+#### Detailed Example
+
+[languages/java/validate](./languages/java/validate)
+
+#### Notes
+
+* *Java* default is *v11* to co-align with *Foggy Development* and container optimized workloads. This allows easy support for frameworks such as *Spring Boot, Micronaut & Quarkus* to switch between *Java* & *GraalVM*
+* *GraalVM Enterprise Edition* can be dropped in as an alternative to *Community Edition* (used in these images) however due to licensing requirements it must be installed manually.
 
 ## Validation
 
@@ -158,3 +190,4 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - *Python3xMinimal* is not available currently in NixPkgs, the default *Python3Minimal* binds to Python 3.7. A pull request could be raised to enable more flexible minimal installs (and save compiling Python within this project)
 - *Python* pip & language are isolated in *-pip images - multi-link and share
 - *Python* pip container is buggy on GitHub actions, but compiles locally & via act - need to identify the delta for this development container
+- *Python* language detection recognize *.pyz file and execute over scanning setup.py (pushes need for `gnugrep` back to only development container)
