@@ -16,8 +16,9 @@
     "S6_FIX_ATTRS_HIDDEN=1"
     "S6_READ_ONLY_ROOT=1"
   ];
-  # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
-  Cmd = "";
+  # CMD unecessary as S6_CMD_ARG0 is set
+  # If CMD is set it **MUST** be a string > 0
+  # Cmd = "";
   # Healthcheck -- should never be used with containers targeting Kubernetes
   # ArgsEscaped -- Windows Containers only
   Volumes = {

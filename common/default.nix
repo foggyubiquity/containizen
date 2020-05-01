@@ -5,11 +5,10 @@
 let
   # path = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${goss}/bin:${language.pkg}/bin";
   # Nix - root - Specific Paths (to avoid confusion in mappings)
-  path = "PATH=/usr/bin:/sbin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
-  start = builtins.readFile ../auto-start-language;
+  path = "PATH=/usr/bin:/bin:${language.pkg}/bin" + "${language.extra.paths}";
 
   goss = pkgs.callPackage ../pkgs/goss.nix {};
-  commonPkgs = pkgs.callPackage ./pkgs.nix { inherit pkgs; };
+  commonPkgs = pkgs.callPackage ./pkgs.nix {};
 in
   #######################
   # Build Image Code    #
@@ -17,44 +16,17 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = buildInfo.name;
   tag = buildInfo.tag;
-  contents = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ [ language.extra.pkgs ] ++ buildInfo.packages;
+
+  contents = commonPkgs.nixpkgs
+  ++ commonPkgs.localpkgs
+  ++ commonPkgs.skawarePackages
+  ++ [ language.pkg ]
+  ++ [ language.extra.pkgs ] # TODO fix to array
+  ++ buildInfo.packages;
+
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
   config = buildInfo.config // {
     Env = buildInfo.config.Env ++ [ path ];
   };
-  extraCommands = ''
-    # User Permissions
-    mkdir -p ./opt/app ./root ./home/containizen ./etc/pam.d
-    chmod 755 ./etc ./opt/app ./root ./home/containizen ./etc/pam.d
-    echo "root:x:0:0::/root:/bin/nologin" > ./etc/passwd
-    echo "containizen:x:289:308::/home/containizen:/bin/nologin" >> ./etc/passwd
-    echo "root:!x:::::::" > ./etc/shadow
-    echo "containizen:!:18226::::::" >> ./etc/shadow
-    echo "root:x:0:" > ./etc/group
-    echo "containizen:x:308:" >> ./etc/group
-    echo "root:x::" > ./etc/gshadow
-    echo "containizen:!::" >> ./etc/gshadow
-    cat > ./etc/pam.d/other <<EOF
-    account sufficient pam_unix.so
-    auth sufficient pam_rootok.so
-    password requisite pam_unix.so nullok sha512
-    session required pam_unix.so
-    EOF
-
-    chmod 0555 ./etc/passwd ./etc/shadow ./etc/group ./etc/gshadow ./etc/pam.d/other ./etc/pam.d
-
-    # Runtime Fix Attributes
-    mkdir -p ./etc/fix-attrs.d
-    chmod 755 ./etc/fix-attrs.d
-    cat > ./etc/fix-attrs.d/00-boot <<EOF
-    /opt/app true containizen 0644 0755
-    EOF
-    chmod 0644 ./etc/fix-attrs.d/00-boot
-
-    # /start app auto launcher
-    cat > ./start <<EOF
-    ${start}
-    EOF
-    chmod 775 ./start
-  '';
+  extraCommands = pkgs.callPackage ./image-extracommands.nix {};
 }

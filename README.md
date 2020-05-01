@@ -136,6 +136,13 @@ COPY containizen.jar /opt/app/
 * *Java* default is *v11* to co-align with *Foggy Development* and container optimized workloads. This allows easy support for frameworks such as *Spring Boot, Micronaut & Quarkus* to switch between *Java* & *GraalVM*
 * *GraalVM Enterprise Edition* can be dropped in as an alternative to *Community Edition* (used in these images) however due to licensing requirements it must be installed manually.
 
+## Built-in Security
+
+* C Libraries are *SymLinked* as per NixPkgs approach ensuring global search of *all* libraries used in the image via [Docker Dive](https://github.com/wagoodman/dive)
+* *Shadow*'s Name Service Switch replaced with *NSSS* for [reasons outlined](https://skarnet.org/software/nsss/nsswitch.html) & smaller attack footprint. `/etc/passwd`, `/etc/group` and `/etc/shadow` still used via `nsss-unix` over `nsss-switch` at this time (Future Optional Improvement)
+* Automatically Dropped Permissions to `GID=328 or _dat_` and `UID=289 or _ctz_`
+* Logging & all default writables are bound to `/tmp` as this would typically be bound via `TMPFS`. Everything else is a Read Only Operating System
+
 ## Validation
 
 Containizen includes [goss](https://github.com/aelsabbahy/goss) for conducting `serverspec` validation on container start. While there are various approaches to using goss & external helpers such as `kgoss` (Kubernetes) or `dgoss` (Docker) executing goss directly within the container on start ensures all application requirements are specified correctly irrespective of the cloud providers or container management technology. Additionally as Containizen uses optimal layer caching & goss is bound to a specific layer there is no image update or propagation overhead beyond its growing the tar.gz size by ~5Mb.

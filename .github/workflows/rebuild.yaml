@@ -156,7 +156,7 @@ jobs:
       # Compile 'Hello World'
       - name: Build Hello World
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/sbin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
+        run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/bin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
       ## Start: Copy Paste ##
       # Generate Whitelist
       - name: Build Base

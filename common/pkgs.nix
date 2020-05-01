@@ -1,17 +1,17 @@
-{ pkgs }:
+{ pkgs, callPackage }:
 let
   #######################
   # Derivations         #
   #######################
 
-  goss = pkgs.callPackage ../pkgs/goss.nix {};
-  s6-overlay = pkgs.callPackage ../pkgs/s6-overlay.nix {};
+  goss = callPackage ../pkgs/goss.nix {};
+  s6-overlay = callPackage ../pkgs/s6-overlay.nix {};
+  skawarePackages = with pkgs.skawarePackages; [ s6 s6-dns s6-linux-utils s6-portable-utils execline nsss ];
 in
 {
-  # Base Image should contain only the essentials to run the application in a container.
-  # Alternatives to nologin are 'su' and 'shadow' (full suite)
-  nixpkgs = with pkgs; [ nologin jq ];
+  nixpkgs = with pkgs; [ jq ] ++ skawarePackages;
 
-  # localpkgs = [ goss s6-overlay ];
-  localpkgs = [ s6-overlay ];
+  # localpkgs = [ goss ];
+  localpkgs = [];
+  inherit skawarePackages;
 }
