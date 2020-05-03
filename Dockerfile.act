@@ -1,10 +1,8 @@
 FROM nixorg/nix:latest as nix
 
 RUN nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-# Stability Fix: --update can timeout on GitHub Actions as build doesn't use default nixpkgs channel this isn't critical
-# when using this container interactively it is important to update the channels
-RUN nix-channel --update && \
-	nix-env -iA \
+RUN nix-channel --update
+RUN nix-env -iA \
 		nodejs_latest \
 		docker \
 	-f '<nixpkgs>'

@@ -9,22 +9,6 @@ on:
     - cron: '15 2 * * *'
 
 jobs:
-  act:
-    name: nixAct
-    runs-on: ubuntu-latest
-    steps:
-      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        if: github.actor != 'nektos/act'
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
-      - run: docker pull nixorg/nix:latest
-      - run: docker build -t foggyubiquity/containizen:act -f Dockerfile.act .
-      - run: docker push foggyubiquity/containizen:act
-        if: github.actor != 'nektos/act'
   makisu:
     name: nixMakisu
     runs-on: ubuntu-latest
@@ -43,6 +27,7 @@ jobs:
   NodeJS:
     runs-on: ubuntu-latest
     env:
+      # Set nixpkgs-unstable on every step to avoid using local channels & their last update time
       NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
       NIX_BUILD: nix-build --cores 0
     strategy:
@@ -62,11 +47,9 @@ jobs:
         if: github.actor != 'nektos/act' || matrix.rolling == true
         with:
           fetch-depth: 1
-      - name: install nix
-        if: github.actor != 'nektos/act'
+      - if: github.actor != 'nektos/act'
         uses: cachix/install-nix-action@v8
-      - name: install cachix
-        if: github.actor != 'nektos/act' || matrix.rolling == true
+      - if: github.actor != 'nektos/act'
         uses: cachix/cachix-action@v6
         with:
           name: foggyubiquity
@@ -172,7 +155,7 @@ jobs:
         if: github.actor != 'nektos/act'
         uses: cachix/install-nix-action@v8
       - name: install cachix
-        if: github.actor != 'nektos/act' || matrix.rolling == true
+        if: github.actor != 'nektos/act'
         uses: cachix/cachix-action@v6
         with:
           name: foggyubiquity
@@ -261,7 +244,6 @@ jobs:
         run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
       ## End: Copy Paste ##
   Java:
-    needs: [ makisu ]
     runs-on: ubuntu-latest
     container:
     env:
@@ -289,7 +271,7 @@ jobs:
         if: github.actor != 'nektos/act'
         uses: cachix/install-nix-action@v8
       - name: install cachix
-        if: github.actor != 'nektos/act' || matrix.rolling == true
+        if: github.actor != 'nektos/act'
         uses: cachix/cachix-action@v6
         with:
           name: foggyubiquity
