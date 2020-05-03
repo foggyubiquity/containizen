@@ -197,6 +197,15 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - `root` is required for S6, but privileges are [irreversibly dropped](https://jdebp.eu/FGA/dont-abuse-su-for-dropping-privileges.html) for application execution. A default user `containizen` of uid:289, gid:328 is available. Additional users & groups can be added via the standard `useradd` & `groupadd` commands
 - Linux Core Utilities are *not* present, S6 equivalents are, in most cases adding `s6-` will trigger the similar command
 
+
+## Local Execution
+
+`foggyubiquity/containizen:act` can be used as a drop-in replacement for *act*s standard runner when wanting Nix capabilities.
+
+* `act -P ubuntu-latest=foggyubiquity/containizen:act -r`
+* Cachix works with this image as well if the secret is passed into *act* appropriately
+
+
 ## Further Work (PR Welcome)
 
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
