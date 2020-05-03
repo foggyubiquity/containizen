@@ -9,8 +9,24 @@ on:
     - cron: '15 2 * * *'
 
 jobs:
+  act:
+    name: nixAct
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        if: github.actor != 'nektos/act'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - run: docker pull nixorg/nix:latest
+      - run: docker build -t foggyubiquity/containizen:act -f Dockerfile.act .
+      - run: docker push foggyubiquity/containizen:act
+        if: github.actor != 'nektos/act'
   makisu:
-    name: NixOS & Makisu
+    name: nixMakisu
     runs-on: ubuntu-latest
     steps:
       - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
@@ -25,15 +41,10 @@ jobs:
       - run: docker push foggyubiquity/containizen:makisu
         if: github.actor != 'nektos/act'
   NodeJS:
-    needs: [ makisu ]
     runs-on: ubuntu-latest
-    container:
-      image: foggyubiquity/containizen:makisu
-      volumes:
-        - nix:/nix
-      env:
-        NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
-        NIX_BUILD: nix-build --cores 0
+    env:
+      NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
+      NIX_BUILD: nix-build --cores 0
     strategy:
       matrix:
         version: [ 10, 12 ]
@@ -46,18 +57,27 @@ jobs:
             pkgManager: "bundled"
             pkgManagerName: "-npm"
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         # Individual IF's added as currently no global or matrix manipulation for 'act'
         if: github.actor != 'nektos/act' || matrix.rolling == true
         with:
           fetch-depth: 1
+      - name: install nix
+        if: github.actor != 'nektos/act'
+        uses: cachix/install-nix-action@v8
+      - name: install cachix
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        uses: cachix/cachix-action@v6
+        with:
+          name: foggyubiquity
+          signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       # Generate Whitelist
       - name: Build Base
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} base.nix
       - name: Construct Vulnerabilities Whitelist
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
+        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
       - name: Generate Dependency Tree
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr vulnix true languages/${{ matrix.language }}
@@ -126,15 +146,10 @@ jobs:
         if: github.actor != 'nektos/act' && matrix.rolling == true
         run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
   Python:
-    needs: [ makisu ]
     runs-on: ubuntu-latest
-    container:
-      image: foggyubiquity/containizen:makisu
-      volumes:
-        - nix:/nix
-      env:
-        NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
-        NIX_BUILD: nix-build --cores 0
+    env:
+      NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
+      NIX_BUILD: nix-build --cores 0
     strategy:
       matrix:
         version: [ 37 ]
@@ -148,11 +163,20 @@ jobs:
           #   pkgManager: "bundled"
           #   pkgManagerName: "-pip"
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
         # Individual IF's added as currently no global or matrix manipulation for 'act'
         if: github.actor != 'nektos/act' || matrix.rolling == true
         with:
           fetch-depth: 1
+      - name: install nix
+        if: github.actor != 'nektos/act'
+        uses: cachix/install-nix-action@v8
+      - name: install cachix
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        uses: cachix/cachix-action@v6
+        with:
+          name: foggyubiquity
+          signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       # Compile 'Hello World'
       - name: Build Hello World
         if: github.actor != 'nektos/act' || matrix.rolling == true
@@ -164,7 +188,7 @@ jobs:
         run: exec ${NIX_BUILD} base.nix
       - name: Construct Vulnerabilities Whitelist
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
+        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
       - name: Generate Dependency Tree
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr vulnix true languages/${{ matrix.language }}
@@ -240,12 +264,9 @@ jobs:
     needs: [ makisu ]
     runs-on: ubuntu-latest
     container:
-      image: foggyubiquity/containizen:makisu
-      volumes:
-        - nix:/nix
-      env:
-        NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
-        NIX_BUILD: nix-build --cores 0
+    env:
+      NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
+      NIX_BUILD: nix-build --cores 0
     strategy:
       matrix:
         version: [ 8, 11 ]
@@ -259,10 +280,20 @@ jobs:
           #   pkgManager: "bundled"
           #   pkgManagerName: "-pip"
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        # Individual IF's added as currently no global or matrix manipulation for 'act'
         if: github.actor != 'nektos/act' || matrix.rolling == true
         with:
           fetch-depth: 1
+      - name: install nix
+        if: github.actor != 'nektos/act'
+        uses: cachix/install-nix-action@v8
+      - name: install cachix
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        uses: cachix/cachix-action@v6
+        with:
+          name: foggyubiquity
+          signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       # Compile 'Hello World'
       - name: Build Hello World (Java 8)
         if: (github.actor != 'nektos/act' || matrix.rolling == true) && matrix.version == 8
@@ -276,7 +307,7 @@ jobs:
         run: exec ${NIX_BUILD} base.nix
       - name: Construct Vulnerabilities Whitelist
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(bash|shadow|glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
+        run: "exec ${NIX_SHELL} vulnix yj jq --run 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -tj | jq \"with_entries(if (.key|test(\\\"^(glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -jt > build.whitelist'"
       - name: Generate Dependency Tree
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr vulnix true languages/${{ matrix.language }}
