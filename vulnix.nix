@@ -2,20 +2,21 @@
 , language
 , pkgs
 }:
+with pkgs;
 let
-  commonPkgs = pkgs.callPackage ./common/pkgs.nix { inherit pkgs; };
+  skaware = callPackage ./common/skaware.nix { inherit pkgs; };
 in
-pkgs.stdenv.mkDerivation {
+stdenv.mkDerivation {
 
-  buildInputs = commonPkgs.nixpkgs ++ commonPkgs.localpkgs ++ [ language.pkg ] ++ buildInfo.packages;
-
+  buildInputs = skaware
+    ++ [ ( if (builtins.getEnv "GITHUB_ACTIONS") != "true" then goss else "") language.pkg ]
+    ++ buildInfo.packages;
   name = "vulnerability-scan";
   src = "...";
   dontUnpack = true;
   dontConfigure = true;
   dontBuild = true;
   dontFixup = true;
-
   installPhase = ''
     mkdir -p $out/bin
   '';

@@ -1,15 +1,7 @@
-{ pkgs ? import (
-    fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
-  ) {
-    config = { allowUnfree = true; };
-  }
-, pkgsPinned ? "nixpkgs-unstable"
-}:
+{ pkgs ? import ./nix }:
 
-with pkgs; with python3Packages;
-let
-  re-act = callPackage ./pkgs/act.nix {};
-in
+with pkgs;
+with python3Packages;
 mkShell rec
 {
   name = "impureEnv";
@@ -29,7 +21,7 @@ mkShell rec
     adoptopenjdk-openj9-bin-11
     execline
     nodejs
-    re-act
+    act
   ];
 
   # Now we can execute any commands within the virtual environment.

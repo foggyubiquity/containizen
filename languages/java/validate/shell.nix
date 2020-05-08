@@ -1,11 +1,6 @@
-{ pkgs ? import (
-    fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
-  ) {
-    config = { allowUnfree = true; };
-  }
-, pkgsPinned ? "nixpkgs-unstable"
+{ pkgManager ? "none"
 , ver ? "11"
-, pkgManager ? "none"
+, pkgs ? import ../../../nix
 }:
 with pkgs;
 let

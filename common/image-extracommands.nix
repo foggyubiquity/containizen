@@ -1,8 +1,7 @@
-{ rsync, callPackage }:
+{ rsync, callPackage, s6-overlay }:
 let
-  s6-overlay = callPackage ../pkgs/s6-overlay.nix {};
   s6-services = ../s6;
-  start = builtins.readFile ../auto-start-language;
+  start = builtins.readFile ./auto-start-language;
 in
 ''
   # User Permissions

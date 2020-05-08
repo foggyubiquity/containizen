@@ -55,6 +55,9 @@ jobs:
           name: foggyubiquity
           signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
       # Generate Whitelist
+      - name: Update NixPkgs
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_SHELL} niv --run 'niv update nixpkgs'
       - name: Build Base
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} base.nix
@@ -166,6 +169,9 @@ jobs:
         run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/bin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
       ## Start: Copy Paste ##
       # Generate Whitelist
+      - name: Update NixPkgs
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_SHELL} niv --run 'niv update nixpkgs'
       - name: Build Base
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} base.nix
@@ -284,6 +290,9 @@ jobs:
         if: (github.actor != 'nektos/act' || matrix.rolling == true) && matrix.version == 11
         run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar --create --file=containizen.jar --main-class=HelloWorld.Main HelloWorld/Main.class'
       ## Start: Copy Paste ##
+      - name: Update NixPkgs
+        if: github.actor != 'nektos/act' || matrix.rolling == true
+        run: exec ${NIX_SHELL} niv --run 'niv update nixpkgs'
       - name: Build Base
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: exec ${NIX_BUILD} base.nix

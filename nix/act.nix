@@ -1,15 +1,10 @@
-{ lib, fetchFromGitHub, buildGoModule }:
+{ lib, buildGoModule, sources }:
 
 buildGoModule rec {
   pname = "act";
-  version = "0.2.8";
+  version = sources.act.version;
 
-  src = fetchFromGitHub {
-    owner = "nektos";
-    repo = pname;
-    rev = "v${version}";
-    sha256 = "14ird8z8f467spa0kdzjf6lq7pipq7rwxrdk6ppv7y1fxw96qm9x";
-  };
+  src = sources.act;
 
   modSha256 = "09q8dh4g4k0y7mrhwyi9py7zdiipmq91j3f32cn635v2xw6zyg2k";
 

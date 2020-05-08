@@ -1,19 +1,14 @@
-{ ver ? null
-, pkgManager ? "none"
-, pkgs ? import (
-    fetchTarball "https://github.com/NixOS/nixpkgs-channels/archive/${pkgsPinned}.tar.gz"
-  ) { config = { allowUnfree = true; }; }
-, pkgsPinned ? "nixpkgs-unstable"
+{ pkgManager ? "none"
 , vulnix ? null
-, ...
+, ver ? null
 }:
 let
+  pkgs = import ../../nix;
   #######################
   # Configuration       #
   #######################
-
   buildInfo = {
-    packages = [];
+    packages = with pkgs; [ jq ];
     # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
     config = import ./config.nix {
       inherit language pkgs pkgManager;
@@ -21,11 +16,10 @@ let
     name = "foggyubiquity/containizen";
     tag = "nodejs-v${ver}${language.npm}";
   };
-
   language = {
     extra =
       {
-        pkgs = [];
+        pkgs = [ ];
         paths = if pkgManager == "bundled" then ":${pkgs.bash}/bin" else "";
       };
     npm = if pkgManager == "bundled" then "-npm" else "";
