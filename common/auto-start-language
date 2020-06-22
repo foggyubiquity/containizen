@@ -1,6 +1,7 @@
 #!/bin/execlineb -S0
 
 # NOTE: \$ is necessary as nixpkgs is passing this text file through a bash shell environment when writing to container
+s6-setuidgid 289:328
 ifelse
 { s6-test \$# -gt 0 }
 { exec \$@ }
