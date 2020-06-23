@@ -25,11 +25,13 @@ jobs:
       - run: docker push foggyubiquity/containizen:makisu
         if: github.actor != 'nektos/act'
   NodeJS:
+    continue-on-error: true
     runs-on: ubuntu-latest
     env:
       # Set nixpkgs-unstable on every step to avoid using local channels & their last update time
       NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
       NIX_BUILD: nix-build --cores 0
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         version: [ 10, 12 ]
@@ -75,7 +77,7 @@ jobs:
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr pkgManager ${{ matrix.pkgManager }} languages/${{ matrix.language }} && mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && cp $(realpath result) artifacts/containizen.tar.gz && ls -larth artifacts
       - name: Construct ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} test container
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
+        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
       - name: Validate ${{ matrix.language }}-v${{ matrix.version }}-${{ matrix.pkgManager }}
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: "exec ${NIX_SHELL} docker --run 'docker run foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | grep \"Hello, world!\"'"
@@ -136,6 +138,7 @@ jobs:
     env:
       NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
       NIX_BUILD: nix-build --cores 0
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         version: [ 37 ]
@@ -189,7 +192,7 @@ jobs:
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr pkgManager ${{ matrix.pkgManager }} languages/${{ matrix.language }}
       - name: Construct ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} test container
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
+        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
       - name: Validate ${{ matrix.language }}-v${{ matrix.version }}-${{ matrix.pkgManager }}
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: "exec ${NIX_SHELL} docker --run 'docker run foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | grep \"Hello, world!\"'"
@@ -251,10 +254,10 @@ jobs:
       ## End: Copy Paste ##
   Java:
     runs-on: ubuntu-latest
-    container:
     env:
       NIX_SHELL: nix-shell -I nixpkgs=https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz -p
       NIX_BUILD: nix-build --cores 0
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         version: [ 8, 11 ]
@@ -310,7 +313,7 @@ jobs:
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr pkgManager ${{ matrix.pkgManager }} languages/${{ matrix.language }}
       - name: Construct ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} test container
         if: github.actor != 'nektos/act' || matrix.rolling == true
-        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
+        run: exec ${NIX_SHELL} docker --run 'docker load -i ./result && docker build --build-arg version=${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} -t foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} languages/${{matrix.language }}/validate/'
       - name: Validate ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
         if: github.actor != 'nektos/act' || matrix.rolling == true
         run: "exec ${NIX_SHELL} docker --run 'docker run foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | grep \"Hello, world!\"'"

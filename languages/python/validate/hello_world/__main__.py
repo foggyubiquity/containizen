@@ -4,7 +4,13 @@ import sys, os
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
-    if os.getgid() == 328 and os.getuid() == 289:
+    gid = os.getgid()
+    uid = os.getuid()
+
+    print("GID: %s" % gid)
+    print("UID: %s" % uid)
+
+    if gid == 328 and uid == 289:
         print("Hello, world!")
     else:
         print("Root says Hello")
