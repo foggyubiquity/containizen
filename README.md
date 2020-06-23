@@ -196,7 +196,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 - `/bin/sh` or `/bin/bash` are not available by default. *sh* is not cross-architecture compatible & introduces security issues. To comply with Cloud Native _(executable containers for any architecture)_ `execlineb` as part of `Skarnet S6` is used. For more information on `sh` issues & challenges see [Skarnet's Post](https://skarnet.org/software/execline/dieshdiedie.html). For more information about using `execlineb` easily see [Just Containers Explainer](https://github.com/just-containers/s6-overlay#executing-initialization-andor-finalization-tasks) or [Danny Spinellas's Getting Started](https://danyspin97.org/blog/getting-started-with-execline-scripting/)
 - `root` is required for S6, but privileges are [irreversibly dropped](https://jdebp.eu/FGA/dont-abuse-su-for-dropping-privileges.html) for application execution. A default user `containizen` of uid:289, gid:328 is available. Additional users & groups can be added via the standard `useradd` & `groupadd` commands
 - Linux Core Utilities are *not* present, S6 equivalents are, in most cases adding `s6-` will trigger the similar command
-
+- OpenJDK has a bug where GID is reported as `308` instead of `328` when fixed upstream GID for Java check will be re-enabled.
 
 ## Local Execution
 
