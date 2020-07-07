@@ -1,24 +1,11 @@
 {
-    "act": {
-        "branch": "master",
-        "description": "Run your GitHub Actions locally 🚀",
-        "homepage": "",
-        "owner": "nektos",
-        "repo": "act",
-        "rev": "a149cf8ca227c0f711cb9209d29804d7a998335b",
-        "sha256": "14ird8z8f467spa0kdzjf6lq7pipq7rwxrdk6ppv7y1fxw96qm9x",
-        "type": "tarball",
-        "url": "https://github.com/nektos/act/archive/v0.2.8.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/v<version>.tar.gz",
-        "version": "0.2.8"
-    },
     "goss": {
         "branch": "master",
         "description": "Quick and Easy server testing/validation",
         "homepage": "https://goss.rocks",
         "owner": "aelsabbahy",
         "repo": "goss",
-        "rev": "06495afc9dde2e5f5ff50ea9e10f519aafc77769",
+        "rev": "d1e9f590bb65196a46df530b0af3cc3ecd5fd4fa",
         "sha256": "0abfrsnyw0g5fpcn2rbl619sqq0r9r1252mhyq5sg0s8vbz1j7la",
         "type": "tarball",
         "url": "https://github.com/aelsabbahy/goss/archive/v0.3.9.tar.gz",
@@ -31,7 +18,7 @@
         "homepage": "",
         "owner": "loadimpact",
         "repo": "k6",
-        "rev": "9586f2f4624548e40e9a0567cf821b5523489a36",
+        "rev": "e16c650e21eadb5f50a32b52c59f0f291cbf687b",
         "sha256": "0s5haycpfnfyvxxhhm7205gzylsbjndx9f134f245p4xm5bxhxbf",
         "type": "tarball",
         "url": "https://github.com/loadimpact/k6/archive/v0.26.2.tar.gz",
@@ -44,10 +31,22 @@
         "homepage": "https://github.com/NixOS/nixpkgs",
         "owner": "NixOS",
         "repo": "nixpkgs-channels",
-        "rev": "5f14d99efed32721172a819b6e78a5520bab4bc6",
-        "sha256": "1nxqbcsc8bfmwy450pv6s12nbvzqxai5mr6v41y478pya26lb108",
+        "rev": "4855aa62fa13052fb1a3daea68971503ab07a744",
+        "sha256": "17sk264qw397zzw12x11ry5vj9qidgbmjsyj544ysg857b4qq9sj",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/5f14d99efed32721172a819b6e78a5520bab4bc6.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/4855aa62fa13052fb1a3daea68971503ab07a744.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "pinnedDockerTools": {
+        "branch": "nixos-unstable",
+        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
+        "homepage": "https://github.com/NixOS/nixpkgs",
+        "owner": "NixOS",
+        "repo": "nixpkgs-channels",
+        "rev": "2dd94af18650aee1b53c9509832068b60c1b1225",
+        "sha256": "1hq3la78cbwxpnvpxgg58q0vhqhn08jyqr69vwg9ynqm756q52km",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixpkgs-channels/archive/2dd94af18650aee1b53c9509832068b60c1b1225.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "s6-overlay": {
@@ -56,10 +55,23 @@
         "homepage": "",
         "owner": "just-containers",
         "repo": "s6-overlay",
-        "rev": "2d22ab9b5b3735d14fa15aafca11ef820e726ae9",
-        "sha256": "0igwnlr4pnp7y7daxciwcanbs2pp75i0gjf0pwgc77vzx47v5f25",
+        "rev": "62852e1152e7a33d852b7c411721c8453d3e2e49",
+        "sha256": "0yxb8vhb2nm1s3s962iigl9788bicmflmm4xg0vzkw5bhjs5rkca",
         "type": "tarball",
-        "url": "https://github.com/just-containers/s6-overlay/archive/2d22ab9b5b3735d14fa15aafca11ef820e726ae9.tar.gz",
+        "url": "https://github.com/just-containers/s6-overlay/archive/62852e1152e7a33d852b7c411721c8453d3e2e49.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "vulnix": {
+        "branch": "master",
+        "description": "Vulnerability (CVE) scanner for Nix/NixOS.",
+        "homepage": "",
+        "owner": "flyingcircusio",
+        "repo": "vulnix",
+        "rev": "0953651d171bda0a515041c67f949dfcb3d4b39c",
+        "sha256": "0h9nkl5zv5q89ks398q3flk7gx4z3rc45zpq0q2xw390vzf75076",
+        "type": "tarball",
+        "url": "https://github.com/flyingcircusio/vulnix/archive/0953651d171bda0a515041c67f949dfcb3d4b39c.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "version": "0.9.6"
     }
 }

@@ -5,16 +5,15 @@ in
 import sources.nixpkgs {
   overlays = [
     (final: prev: {
-      act = callPackage ./act.nix { inherit sources; };
-      k6 = prev.k6.overrideAttrs
-        (old: {
-          name = "patched-k6-${old.version}";
-          src = sources.k6;
-        });
+      dockerTools = (import sources.pinnedDockerTools { }).dockerTools;
+      k6 = prev.k6.overrideAttrs (old: {
+        name = "patched-k6-${old.version}";
+        src = sources.k6;
+      });
       goss = callPackage
-        ./goss.nix
-        { inherit sources; };
+        ./goss.nix { inherit sources; };
       s6-overlay = sources.s6-overlay;
+      vulnix = callPackage sources.vulnix { };
     })
   ];
   config = {
