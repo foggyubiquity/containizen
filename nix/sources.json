@@ -38,15 +38,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pinnedDockerTools": {
-        "branch": "nixos-unstable",
-        "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",
-        "homepage": "https://github.com/NixOS/nixpkgs",
-        "owner": "NixOS",
-        "repo": "nixpkgs-channels",
-        "rev": "2dd94af18650aee1b53c9509832068b60c1b1225",
-        "sha256": "1hq3la78cbwxpnvpxgg58q0vhqhn08jyqr69vwg9ynqm756q52km",
+        "branch": "oci-compatible",
+        "description": "Nix Packages collection",
+        "homepage": null,
+        "owner": "Keidrych",
+        "repo": "nixpkgs",
+        "rev": "1e3c95daf6a06f6fb446882537f42068f4b0fb20",
+        "sha256": "017h9yfc64wzi3z952pbajzr6zi10df4p11l5mnf5178fk4kxnww",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs-channels/archive/2dd94af18650aee1b53c9509832068b60c1b1225.tar.gz",
+        "url": "https://github.com/Keidrych/nixpkgs/archive/1e3c95daf6a06f6fb446882537f42068f4b0fb20.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "s6-overlay": {
