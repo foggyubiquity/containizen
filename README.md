@@ -21,7 +21,7 @@ Should arguments be supplied to `CMD` they will override this autostart function
 
 NOTE: `RUN` should *never* be used in `Dockerfile`(s) as it places a hard requirement on Docker being present in the build pipeline. Preventing powerful tools such as `Kaniko` & `Makisu` from leveraging Kubernetes for builds. Containizen images utilize approaches that do *not* require `RUN`.
 
-### NodeJS ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/nodejs?label=Latest%20Image%20Size&logo=Node.js&style=for-the-badge)
+### NodeJS ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/nodejs?label=Latest%20Image%20Size&logo=Node.js&style=for-the-badge) ![Docker Image Layers (tag)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Keidrych/a30bfe852b49d4f029eabb4905b78795/raw/nodejs.json)
 
 #### Versions
 
@@ -57,7 +57,7 @@ COPY . /opt/app
 * NPM is unnecessary for production code execution & creates a significant attack footprint. NPM is omitted from the container by default, use *-npm* tag if you need it
 * *Auto Start*: scans `package.json` for `scripts.start` & executes the value.
 
-### Python ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/python?label=Latest%20Image%20Size&logo=Python&style=for-the-badge)
+### Python ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/python?label=Latest%20Image%20Size&logo=Python&style=for-the-badge) ![Docker Image Layers (tag)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Keidrych/a30bfe852b49d4f029eabb4905b78795/raw/python.json)
 
 #### Versions
 
@@ -97,7 +97,7 @@ COPY containizen.pyz /opt/app/
 * `pip-tools` provides a well-respected hash & pinning ability for PyPi packages / requirements
 * *Auto Start*: scans `setup.py` for `setup(name=xxxx` and executes via `./xxxx` as per *shiv* specification & [PEP 441](http://legacy.python.org/dev/peps/pep-0441/)
 
-### Java ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/java?label=Latest%20Image%20Size&logo=Java&style=for-the-badge)
+### Java ![Docker Image Size (tag)](https://img.shields.io/docker/image-size/foggyubiquity/containizen/java?label=Latest%20Image%20Size&logo=Java&style=for-the-badge) ![Docker Image Layers (tag)](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Keidrych/a30bfe852b49d4f029eabb4905b78795/raw/java.json)
 
 #### Engine Information
 
