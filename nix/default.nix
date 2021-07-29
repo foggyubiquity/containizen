@@ -1,12 +1,11 @@
 let
   sources = import ../nix/sources.nix;
-  callPackage = (import sources.nixpkgs {}).callPackage;
+  callPackage = (import sources.nixpkgs { }).callPackage;
 in
 import sources.nixpkgs {
   overlays = [
     (
       final: prev: {
-        dockerTools = (import sources.pinnedDockerTools {}).dockerTools;
         k6 = prev.k6.overrideAttrs (
           old: {
             name = "patched-k6-${old.version}";
@@ -14,10 +13,11 @@ import sources.nixpkgs {
           }
         );
         goss = callPackage
-          ./goss.nix { inherit sources; };
+          ./goss.nix
+          { inherit sources; };
         s6-overlay = sources.s6-overlay;
-        vulnix = callPackage sources.vulnix {};
-        niv = (import sources.niv {}).niv;
+        # vulnix = callPackage sources.vulnix { };
+        niv = (import sources.niv { }).niv;
       }
     )
   ];

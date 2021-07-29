@@ -9,7 +9,7 @@ in
 stdenv.mkDerivation {
 
   buildInputs = skaware
-    ++ [ ( if (builtins.getEnv "GITHUB_ACTIONS") != "true" then goss else "") language.pkg ]
+    ++ [ (if (builtins.getEnv "GITHUB_ACTIONS") != "true" then goss else "") language.pkg ]
     ++ buildInfo.packages;
   name = "vulnerability-scan";
   src = "...";

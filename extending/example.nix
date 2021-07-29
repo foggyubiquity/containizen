@@ -4,9 +4,11 @@
     name = "foggyubiquity/containizen";
     tag = "extended";
   }
-, pkgs ? import (
-    fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
-  ) { config = { allowUnfree = true; }; }
+, pkgs ? import
+    (
+      fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixpkgs-unstable.tar.gz
+    )
+    { config = { allowUnfree = true; }; }
 }:
 let
   #######################
@@ -19,13 +21,13 @@ let
 
   buildInfo = {
     language = pkgs."${fromContainizen}";
-    packages = [];
+    packages = [ ];
     # Ensure that any pkgs called / referenced in 'config' are specifically declared in the packages for layered-image to keep last layer minimal
     config = configCommon // {
       ExposedPorts = configCommon.ExposedPorts // {
         # "<port>/<tcp|udp>": {}
       };
-      Env = configCommon.Env ++ [];
+      Env = configCommon.Env ++ [ ];
       Labels = configCommon.Labels // {
         # "from" = "containizen";
       };
@@ -43,7 +45,7 @@ let
   # Build Image Code    #
   #######################
 in
-  # TODO switch to buildLayeredImage to optimize caching, requires merging the two images
+# TODO switch to buildLayeredImage to optimize caching, requires merging the two images
   # https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/docker/default.nix contains all available attributes.
 pkgs.dockerTools.buildImage {
   created = "now"; # Current TimeStamp instead of layeredImage epoch + 1 (for caching)
@@ -54,5 +56,6 @@ pkgs.dockerTools.buildImage {
   # Nix is building the container in a workspace, links should always be ./ which will result in / in the final container
   extraCommands = ''
     '';
-  config = buildInfo.config;
+  config = buildInfo.config; # options as per Docker v1.2.0 specification
+  # https://github.com/moby/moby/blob/master/image/spec/v1.2.md#image-json-field-descriptions
 }

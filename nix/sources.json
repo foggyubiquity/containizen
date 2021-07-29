@@ -50,18 +50,6 @@
         "url": "https://github.com/NixOS/nixpkgs-channels/archive/72b9660dc18ba347f7cd41a9504fc181a6d87dc3.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "pinnedDockerTools": {
-        "branch": "oci-compatible",
-        "description": "Nix Packages collection",
-        "homepage": null,
-        "owner": "Keidrych",
-        "repo": "nixpkgs",
-        "rev": "1e3c95daf6a06f6fb446882537f42068f4b0fb20",
-        "sha256": "017h9yfc64wzi3z952pbajzr6zi10df4p11l5mnf5178fk4kxnww",
-        "type": "tarball",
-        "url": "https://github.com/Keidrych/nixpkgs/archive/1e3c95daf6a06f6fb446882537f42068f4b0fb20.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
     "s6-overlay": {
         "branch": "master",
         "description": "s6 overlay for containers (includes execline, s6-linux-utils & a custom init)",
@@ -73,18 +61,5 @@
         "type": "tarball",
         "url": "https://github.com/just-containers/s6-overlay/archive/62852e1152e7a33d852b7c411721c8453d3e2e49.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
-    },
-    "vulnix": {
-        "branch": "master",
-        "description": "Vulnerability (CVE) scanner for Nix/NixOS.",
-        "homepage": "",
-        "owner": "flyingcircusio",
-        "repo": "vulnix",
-        "rev": "0953651d171bda0a515041c67f949dfcb3d4b39c",
-        "sha256": "0h9nkl5zv5q89ks398q3flk7gx4z3rc45zpq0q2xw390vzf75076",
-        "type": "tarball",
-        "url": "https://github.com/flyingcircusio/vulnix/archive/0953651d171bda0a515041c67f949dfcb3d4b39c.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
-        "version": "0.9.6"
     }
 }

@@ -208,7 +208,7 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 * Cachix works with this image as well if the secret is passed into *act* appropriately
 
 
-## Further Work (PR Welcome)
+## Value Experimentations Required (PR Welcome)
 
 - musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Cache nix/store in GitHub Actions

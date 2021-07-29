@@ -10,9 +10,9 @@ common // {
   ExposedPorts = common.ExposedPorts // {
     # "<port>/<tcp|udp>": {}
   };
-  Env = common.Env ++ [];
+  Env = common.Env ++ [ ];
   # Cmd must be specified as Nix strips any prior definition out to ensure clean execution
-  Cmd = [];
+  Cmd = [ ];
   Labels = common.Labels // {
     # Custom Labels
     "from" = "containizen";

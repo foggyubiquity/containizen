@@ -8,7 +8,7 @@ let
   # Nix - root - Specific Paths (to avoid confusion in mappings)
   path = "PATH=/usr/bin:/bin:${language.pkg}/bin"
     + "${language.extra.paths}"
-    + ( if (builtins.getEnv "GITHUB_ACTIONS") != "true" then ":${goss}/bin" else "");
+    + (if (builtins.getEnv "GITHUB_ACTIONS") != "true" then ":${goss}/bin" else "");
   skaware = callPackage ./skaware.nix {
     inherit pkgs;
   };
@@ -20,8 +20,8 @@ dockerTools.buildLayeredImage {
   name = buildInfo.name;
   tag = buildInfo.tag;
   contents = skaware
-    ++ [ ( if (builtins.getEnv "GITHUB_ACTIONS") != "true" then goss else "") language.pkg ]
-    ++ [ language.extra.pkgs ] # TODO fix to array
+    ++ [ (if (builtins.getEnv "GITHUB_ACTIONS") != "true" then goss else "") language.pkg ]
+    ++ language.extra.pkgs
     ++ buildInfo.packages;
   maxLayers = 104; # 128 is the maximum number of layers, leaving 24 available for extension
   config = buildInfo.config // {
