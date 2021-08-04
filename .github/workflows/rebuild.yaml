@@ -98,14 +98,14 @@ jobs:
       - name: Scan for Vulnerabilities
         run: exec ${NIX_SHELL} 'vulnix --whitelist build.whitelist ./result > vulnerabilities.txt; cat vulnerabilities.txt'
 
-      - name: Build Hello World (Java 8)
+      - name: Compile Hello World (Java 8)
         if:  startsWith(matrix.language, 'java') && matrix.version == 8
         run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar cfm containizen.jar Manifest.txt HelloWorld/Main.class'
-      - name: Build Hello World (Java 11)
+      - name: Compile Hello World (Java 11)
         if:  startsWith(matrix.language, 'java') && matrix.version == 11
         # if: (github.actor != 'nektos/act' || matrix.rolling == true) && matrix.version == 11
         run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar --create --file=containizen.jar --main-class=HelloWorld.Main HelloWorld/Main.class'
-      - name: Build Hello World (Python)
+      - name: Compile Hello World (Python)
         if: startsWith(matrix.language, 'python')
         run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/bin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
 
