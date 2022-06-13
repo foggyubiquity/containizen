@@ -25,7 +25,27 @@ jobs:
       - run: docker push foggyubiquity/containizen:makisu
         if: github.actor != 'nektos/act'
 
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      java: ${{ steps.filter.outputs.java }}
+      nodejs: ${{ steps.filter.outputs.nodejs }}
+      python: ${{ steps.filter.outputs.python }}
+    steps:
+      - uses: dorny/paths-filter@v2.10.2
+        id: filter
+        with:
+          filters: |
+            java:
+              - 'languages/java/**'
+            nodejs:
+              - 'languages/nodejs/**'
+            python:
+              - 'languages/python/**'
+
   OCI-java:
+    needs: [ changes ]
+    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.java == 'true' }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "java" ]'
@@ -33,7 +53,10 @@ jobs:
       pkgManager: '[ "none" ]'
       include: '[{"rolling": true, "version": 11}]'
     secrets: inherit
+
   OCI-nodejs:
+    needs: [ changes ]
+    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.nodejs == 'true' }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "nodejs" ]'
@@ -41,7 +64,10 @@ jobs:
       pkgManager: '[ "none", "bundled" ]'
       include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
     secrets: inherit
+
   OCI-python:
+    needs: [ changes ]
+    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.python == 'true' }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
