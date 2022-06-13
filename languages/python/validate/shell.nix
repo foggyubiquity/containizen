@@ -23,6 +23,7 @@ mkShell rec
     # dropping into the shell
     venvShellHook
     pip
+    # pip-tools can't currently be used from NIX as pip-sync tries to remove setuptools-scm which fails due to read only filesystem
 
     # NixPkgs
   ];

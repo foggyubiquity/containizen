@@ -68,7 +68,8 @@ jobs:
         run: cd languages/${{ matrix.language }}/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'javac HelloWorld/Main.java && jar --create --file=containizen.jar --main-class=HelloWorld.Main HelloWorld/Main.class'
       - name: Compile Hello World (Python)
         if: startsWith(matrix.language, 'python')
-        run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/bin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
+        # pip 22+ breaks backwards compatibility with pip-tools. Currently pinning pip-tools to 5.3.1 to ensure build stability
+        run: "cd languages/python/validate && nix-shell --argstr ver ${{ matrix.version }} --run 'pip install pip-tools==5.3.1 && pip-sync requirements/prod.txt requirements/dev.txt && pip install -r requirements/prod.txt --upgrade --target pkgs && SOURCE_DATE_EPOCH=$(date +%s) shiv --compressed --python \"/bin/s6-env python3\" --console-script main --output-file containizen.pyz --site-packages pkgs .'"
 
       - name: Create Container
         run: exec ${NIX_BUILD} --argstr ver ${{ matrix.version }} --argstr pkgManager ${{ matrix.pkgManager }} languages/${{ matrix.language }} && mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && cp $(realpath result) artifacts/containizen.tar.gz && ls -larth artifacts
