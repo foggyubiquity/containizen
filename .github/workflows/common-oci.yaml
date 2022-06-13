@@ -48,16 +48,16 @@ jobs:
             version: 12
           - language: python
             pkgManager: bundled
-            include:
-              - rolling: true
-                version: 10
-              - rolling: true
-                version: 11
-              - rolling: true
-                version: 37
-              - language: "nodejs"
-                pkgManager: "bundled"
-                pkgManagerName: "-npm"
+        include:
+          - rolling: true
+            version: 10
+          - rolling: true
+            version: 11
+          - rolling: true
+            version: 37
+          - language: "nodejs"
+            pkgManager: "bundled"
+            pkgManagerName: "-npm"
     steps:
       - uses: actions/checkout@v2
         with:
