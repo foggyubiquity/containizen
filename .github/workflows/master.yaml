@@ -48,7 +48,11 @@ jobs:
 
   OCI-java:
     needs: [ changes ]
-    if: needs.changes.outputs.java == 'true' && github.event.schedule != '15 2 * * *'
+    if: >-
+      ${{
+        needs.changes.outputs.java == 'true' ||
+        github.event.schedule == '15 2 * * *'
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "java" ]'
@@ -59,7 +63,11 @@ jobs:
 
   OCI-nodejs:
     needs: [ changes ]
-    if: needs.changes.outputs.nodejs == 'true' && github.event.schedule != '15 2 * * *'
+    if: >-
+      ${{
+        needs.changes.outputs.nodejs == 'true' ||
+        github.event.schedule == '15 2 * * *'
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "nodejs" ]'
@@ -70,7 +78,11 @@ jobs:
 
   OCI-python:
     needs: [ changes ]
-    if: needs.changes.outputs.python == 'true' && github.event.schedule != '15 2 * * *'
+    if: >-
+      ${{
+        needs.changes.outputs.python == 'true' ||
+        github.event.schedule == '15 2 * * *'
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
