@@ -6,7 +6,7 @@ with pkgs;
 let
   pythonVer = "python${ver}Packages";
   pp = pkgs.${pythonVer};
-  # TODO python3Minimal is the only one available in NixPkgs, pinned to 3.7. It should be extended to allow newer version
+  # TODO python3Minimal is the only one available in NixPkgs, pinned to 3.8. It should be extended to allow alternate versions
   language = "python${ver}Minimal";
   pythonLang = pkgs.${language};
 in

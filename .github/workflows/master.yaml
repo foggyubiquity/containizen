@@ -45,8 +45,8 @@ jobs:
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
-      version: '[ 37 ]'
+      version: '[ 38 ]'
       pkgManager: '[ "none" ]'
-      include: '[{"rolling": true, "version": 37}]'
+      include: '[{"rolling": true, "version": 38}]'
     secrets: inherit
 
