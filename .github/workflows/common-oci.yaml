@@ -101,7 +101,7 @@ jobs:
         run: "exec ${NIX_SHELL} 'docker run foggyubiquity/containizen:test-${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | grep \"Hello, world!\"'"
       - name: Bundle Artifacts
         run: mkdir -p artifacts && mv vulnerabilities.txt artifacts/vulnerabilities.txt && cp $(realpath result) artifacts/containizen.tar.gz
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
           path: artifacts
