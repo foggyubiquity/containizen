@@ -1,14 +1,24 @@
-name: OCI
+name: ${{ inputs.language }}
 
 on:
   workflow_call:
+    inputs:
+      language:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      pkgManager:
+        required: true
+        type: string
     secrets:
       ACT_IONS:
         required: true
 
 jobs:
-  reusable_workflow_job:
-    continue-on-error: true
+  build:
+    continue-on-error: ${{ matrix.experimental }}
     runs-on: ubuntu-latest
     env:
       # Set nixpkgs-unstable on every step to avoid using local channels & their last update time
@@ -17,37 +27,42 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ACT_IONS }}
 
     strategy:
+      fail-fast: true
       matrix:
-        language: [ java, nodejs, python ]
-        version: [ 8, 11, 10, 12, 37 ]
-        pkgManager: [ "none", "bundled" ]
-        exclude:
-          - language: java
-            version: 10
-          - language: java
-            version: 12
-          - language: java
-            version: 37
-          - language: java
-            pkgManager: bundled
+        experimental: [false]
+        language: [ ${{ inputs.language }} ]
+        version: ${{ fromJSON(inputs.version) }}
+        pkgManager: ${{ fromJSON(inputs.pkgManager) }}
+        # language: [ java, nodejs, python ]
+        # version: [ 8, 11, 10, 12, 37 ]
+        # pkgManager: [ "none", "bundled" ]
+        # exclude:
+        #   - language: java
+        #     version: 10
+        #   - language: java
+        #     version: 12
+        #   - language: java
+        #     version: 37
+        #   - language: java
+        #     pkgManager: bundled
 
-          - language: nodejs
-            version: 8
-          - language: nodejs
-            version: 11
-          - language: nodejs
-            version: 37
+        #   - language: nodejs
+        #     version: 8
+        #   - language: nodejs
+        #     version: 11
+        #   - language: nodejs
+        #     version: 37
 
-          - language: python
-            version: 8
-          - language: python
-            version: 11
-          - language: python
-            version: 10
-          - language: python
-            version: 12
-          - language: python
-            pkgManager: bundled
+        #   - language: python
+        #     version: 8
+        #   - language: python
+        #     version: 11
+        #   - language: python
+        #     version: 10
+        #   - language: python
+        #     version: 12
+        #   - language: python
+        #     pkgManager: bundled
         include:
           - rolling: true
             version: 10

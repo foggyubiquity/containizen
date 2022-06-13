@@ -3,12 +3,29 @@ on:
   # check_suite:
   #   types: [ 'completed' ]
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
     branches:
       - master
 
 jobs:
-  call-oci:
+  # oci-java:
+  #   uses: ./.github/workflows/common-oci.yaml
+  #   with:
+  #     language: [ java ]
+  #     version: [ 8, 11 ]
+  #     pkgManager: [ "none" ]
+  #   secrets: inherit
+  oci-nodejs:
     uses: ./.github/workflows/common-oci.yaml
+    with:
+      language: ${{ toJSON([ nodejs ]) }}
+      version: ${{ toJSON([ 10, 12 ]) }}
+      pkgManager: ${{ toJSON([ "none", "bundled" ]) }}
     secrets: inherit
-
+  # oci-python:
+  #   uses: ./.github/workflows/common-oci.yaml
+  #   with:
+  #     language: [ python ]
+  #     version: [ 37 ]
+  #     pkgManager: [ "none" ]
+  #   secrets: inherit

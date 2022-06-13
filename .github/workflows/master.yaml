@@ -25,8 +25,12 @@ jobs:
       - run: docker push foggyubiquity/containizen:makisu
         if: github.actor != 'nektos/act'
 
-  OCI:
+  OCI-nodejs:
     uses: ./.github/workflows/common-oci.yaml
+    with:
+      language: nodejs
+      version: ${{ toJSON([ 10, 12 ]) }}
+      pkgManager: ${{ toJSON([ "none", "bundled" ]) }}
     secrets: inherit
 
   uploadOCI:
