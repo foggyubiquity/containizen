@@ -8,24 +8,28 @@ on:
       - master
 
 jobs:
-  # oci-java:
-  #   uses: ./.github/workflows/common-oci.yaml
-  #   with:
-  #     language: [ java ]
-  #     version: [ 8, 11 ]
-  #     pkgManager: [ "none" ]
-  #   secrets: inherit
-  oci-nodejs:
+  OCI-java:
     uses: ./.github/workflows/common-oci.yaml
     with:
-      language: ${{ toJSON([ nodejs ]) }}
-      version: ${{ toJSON([ 10, 12 ]) }}
-      pkgManager: ${{ toJSON([ "none", "bundled" ]) }}
+      language: '[ "java" ]'
+      version: '[ 8, 11 ]'
+      pkgManager: '[ "none" ]'
+      include: '[{"rolling": true, "version": 11}]'
     secrets: inherit
-  # oci-python:
-  #   uses: ./.github/workflows/common-oci.yaml
-  #   with:
-  #     language: [ python ]
-  #     version: [ 37 ]
-  #     pkgManager: [ "none" ]
-  #   secrets: inherit
+  OCI-nodejs:
+    uses: ./.github/workflows/common-oci.yaml
+    with:
+      language: '[ "nodejs" ]'
+      version: '[ 10, 12 ]'
+      pkgManager: '[ "none", "bundled" ]'
+      include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
+    secrets: inherit
+  OCI-python:
+    uses: ./.github/workflows/common-oci.yaml
+    with:
+      language: '[ "python" ]'
+      version: '[ 37 ]'
+      pkgManager: '[ "none" ]'
+      include: '[{"rolling": true, "version": 37}]'
+    secrets: inherit
+
