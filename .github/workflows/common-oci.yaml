@@ -18,7 +18,8 @@ on:
 
 jobs:
   build:
-    continue-on-error: ${{ matrix.experimental }}
+    # continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: false
     runs-on: ubuntu-latest
     env:
       # Set nixpkgs-unstable on every step to avoid using local channels & their last update time
@@ -29,7 +30,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        experimental: false
+        experimental: [false]
         language: [ ${{ inputs.language }} ]
         version: ${{ fromJSON(inputs.version) }}
         pkgManager: ${{ fromJSON(inputs.pkgManager) }}
