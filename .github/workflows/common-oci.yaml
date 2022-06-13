@@ -16,48 +16,48 @@ jobs:
       NIX_BUILD: nix-build --cores 0 --max-jobs auto
       GITHUB_TOKEN: ${{ secrets.ACT_IONS }}
 
-  strategy:
-    matrix:
-      language: [ java, nodejs, python ]
-      version: [ 8, 11, 10, 12, 37 ]
-      pkgManager: [ "none", "bundled" ]
-      exclude:
-        - language: java
-          version: 10
-        - language: java
-          version: 12
-        - language: java
-          version: 37
-        - language: java
-          pkgManager: bundled
+    strategy:
+      matrix:
+        language: [ java, nodejs, python ]
+        version: [ 8, 11, 10, 12, 37 ]
+        pkgManager: [ "none", "bundled" ]
+        exclude:
+          - language: java
+            version: 10
+          - language: java
+            version: 12
+          - language: java
+            version: 37
+          - language: java
+            pkgManager: bundled
 
-        - language: nodejs
-          version: 8
-        - language: nodejs
-          version: 11
-        - language: nodejs
-          version: 37
+          - language: nodejs
+            version: 8
+          - language: nodejs
+            version: 11
+          - language: nodejs
+            version: 37
 
-        - language: python
-          version: 8
-        - language: python
-          version: 11
-        - language: python
-          version: 10
-        - language: python
-          version: 12
-        - language: python
-          pkgManager: bundled
-          include:
-            - rolling: true
-              version: 10
-            - rolling: true
-              version: 11
-            - rolling: true
-              version: 37
-            - language: "nodejs"
-              pkgManager: "bundled"
-              pkgManagerName: "-npm"
+          - language: python
+            version: 8
+          - language: python
+            version: 11
+          - language: python
+            version: 10
+          - language: python
+            version: 12
+          - language: python
+            pkgManager: bundled
+            include:
+              - rolling: true
+                version: 10
+              - rolling: true
+                version: 11
+              - rolling: true
+                version: 37
+              - language: "nodejs"
+                pkgManager: "bundled"
+                pkgManagerName: "-npm"
     steps:
       - uses: actions/checkout@v2
         with:

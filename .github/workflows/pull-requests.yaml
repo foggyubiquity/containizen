@@ -2,13 +2,13 @@ name: pull requests to master
 on:
   # check_suite:
   #   types: [ 'completed' ]
-  pull-request:
+  pull_request:
     types: [opened, synchronize]
     branches:
       - master
 
 jobs:
-  pull-request:
+  call-oci:
     uses: ./.github/workflows/common-oci.yaml
     secrets: inherit
 
