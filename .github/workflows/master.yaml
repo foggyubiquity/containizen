@@ -116,7 +116,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
       - name: Create Badge
         if: matrix.rolling == true
-        uses: schneegans/dynamic-badges-action@v1.0.0
+        uses: schneegans/dynamic-badges-action@v1.4.0
         with:
           auth: ${{ secrets.ACT_IONS }}
           gistID: a30bfe852b49d4f029eabb4905b78795
