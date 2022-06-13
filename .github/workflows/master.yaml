@@ -32,6 +32,9 @@ jobs:
       nodejs: ${{ steps.filter.outputs.nodejs }}
       python: ${{ steps.filter.outputs.python }}
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
       - uses: dorny/paths-filter@v2.10.2
         id: filter
         with:
@@ -45,7 +48,7 @@ jobs:
 
   OCI-java:
     needs: [ changes ]
-    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.java == 'true' }}
+    if: needs.changes.outputs.java == 'true' && github.event.schedule != '15 2 * * *'
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "java" ]'
@@ -56,7 +59,7 @@ jobs:
 
   OCI-nodejs:
     needs: [ changes ]
-    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.nodejs == 'true' }}
+    if: needs.changes.outputs.nodejs == 'true' && github.event.schedule != '15 2 * * *'
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "nodejs" ]'
@@ -67,7 +70,7 @@ jobs:
 
   OCI-python:
     needs: [ changes ]
-    if: github.event.schedule != '15 2 * * *' && ${{ needs.changes.outputs.python == 'true' }}
+    if: needs.changes.outputs.python == 'true' && github.event.schedule != '15 2 * * *'
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
