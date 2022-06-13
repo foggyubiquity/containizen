@@ -1,4 +1,4 @@
-name: ${{ inputs.language }}
+name: OCI
 
 on:
   workflow_call:
@@ -12,13 +12,15 @@ on:
       pkgManager:
         required: true
         type: string
+      include:
+        required: true
+        type: string
     secrets:
       ACT_IONS:
         required: true
 
 jobs:
   build:
-    # continue-on-error: ${{ matrix.experimental }}
     continue-on-error: false
     runs-on: ubuntu-latest
     env:
@@ -28,12 +30,11 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.ACT_IONS }}
 
     strategy:
-      fail-fast: true
       matrix:
-        experimental: [false]
-        language: [ ${{ inputs.language }} ]
+        language: ${{ fromJSON(inputs.language) }}
         version: ${{ fromJSON(inputs.version) }}
         pkgManager: ${{ fromJSON(inputs.pkgManager) }}
+        include: ${{ fromJSON(inputs.include) }}
         # language: [ java, nodejs, python ]
         # version: [ 8, 11, 10, 12, 37 ]
         # pkgManager: [ "none", "bundled" ]
@@ -64,16 +65,16 @@ jobs:
         #     version: 12
         #   - language: python
         #     pkgManager: bundled
-        include:
-          - rolling: true
-            version: 10
-          - rolling: true
-            version: 11
-          - rolling: true
-            version: 37
-          - language: "nodejs"
-            pkgManager: "bundled"
-            pkgManagerName: "-npm"
+        # include:
+        #   - rolling: true
+        #     version: 10
+        #   - rolling: true
+        #     version: 11
+        #   - rolling: true
+        #     version: 37
+        #   - language: "nodejs"
+        #     pkgManager: "bundled"
+        #     pkgManagerName: "-npm"
     steps:
       - uses: actions/checkout@v3
         with:

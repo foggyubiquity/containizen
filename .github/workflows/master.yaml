@@ -28,14 +28,15 @@ jobs:
   OCI-nodejs:
     uses: ./.github/workflows/common-oci.yaml
     with:
-      language: nodejs
-      version: ${{ toJSON([ 10, 12 ]) }}
-      pkgManager: ${{ toJSON([ "none", "bundled" ]) }}
+      language: '[ "nodejs" ]'
+      version: '[ 10, 12 ]'
+      pkgManager: '[ "none", "bundled" ]'
+      include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
     secrets: inherit
 
   uploadOCI:
     if: github.actor != 'nektos/act'
-    needs: [ OCI ]
+    needs: [ OCI-nodejs ]
     runs-on: ubuntu-latest
     defaults:
       run:
