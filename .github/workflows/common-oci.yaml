@@ -122,3 +122,64 @@ jobs:
         with:
           name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
           path: artifacts
+
+  upload:
+    if: ${{ github.head_ref || github.ref_name }} == 'master' && github.actor != 'nektos/act'
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        language: ${{ fromJSON(inputs.language) }}
+        version: ${{ fromJSON(inputs.version) }}
+        pkgManager: ${{ fromJSON(inputs.pkgManager) }}
+        include: ${{ fromJSON(inputs.include) }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+          path: artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Load ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        run: docker load -i artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}/containizen.tar.gz
+      - name: Dive Safely
+        uses: yuichielectric/dive-action@0.0.4
+        with:
+          image: 'foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}'
+          config-file: ${{ github.workspace }}/.dive-ci.yml
+          github-token: ${{ secrets.ACT_IONS }}
+        env:
+          CI: true
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Upload ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Tag rolling
+        if: matrix.rolling == true
+        run: docker tag foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      - name: Upload rolling
+        if: matrix.rolling == true
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      - name: Count ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} layers
+        if: matrix.rolling == true
+        run: |
+          echo 'LAYERS<<EOF' >> $GITHUB_ENV
+          docker history -q foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | wc -l >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      - name: Create Badge
+        if: matrix.rolling == true
+        uses: schneegans/dynamic-badges-action@v1.4.0
+        with:
+          auth: ${{ secrets.ACT_IONS }}
+          gistID: a30bfe852b49d4f029eabb4905b78795
+          filename: ${{ matrix.language }}${{ matrix.pkgManagerName }}.json
+          label: Layers
+          message: ${{ env.LAYERS }}
+          color: blue
+
