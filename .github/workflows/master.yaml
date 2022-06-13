@@ -1,0 +1,126 @@
+name: master
+on:
+  # check_suite:
+  #   types: [ 'completed' ]
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '15 2 * * *'
+
+jobs:
+  makisu:
+    name: nixMakisu
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        if: github.actor != 'nektos/act'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - run: docker build -t foggyubiquity/containizen:makisu .
+      - run: docker push foggyubiquity/containizen:makisu
+        if: github.actor != 'nektos/act'
+
+  OCI:
+    uses: ./.github/workflows/common-oci.yaml
+    secrets: inherit
+
+  uploadOCI:
+    if: github.actor != 'nektos/act'
+    needs: [ OCI ]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      matrix:
+        language: [ java, nodejs, python ]
+        version: [ 8, 11, 10, 12, 37 ]
+        pkgManager: [ "none", "bundled" ]
+        exclude:
+          - language: java
+            version: 10
+          - language: java
+            version: 12
+          - language: java
+            version: 37
+          - language: java
+            pkgManager: bundled
+
+          - language: nodejs
+            version: 8
+          - language: nodejs
+            version: 11
+          - language: nodejs
+            version: 37
+
+          - language: python
+            version: 8
+          - language: python
+            version: 11
+          - language: python
+            version: 10
+          - language: python
+            version: 12
+          - language: python
+            pkgManager: bundled
+        include:
+          - rolling: true
+            version: 10
+          - rolling: true
+            version: 11
+          - rolling: true
+            version: 37
+          - language: "nodejs"
+            pkgManager: "bundled"
+            pkgManagerName: "-npm"
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v1
+        with:
+          name: ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+          path: artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Load ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        run: docker load -i artifacts/${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}/containizen.tar.gz
+      - name: Dive Safely
+        uses: yuichielectric/dive-action@0.0.4
+        with:
+          image: 'foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}'
+          config-file: ${{ github.workspace }}/.dive-ci.yml
+          github-token: ${{ secrets.ACT_IONS }}
+        env:
+          CI: true
+      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Upload ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
+      - name: Tag rolling
+        if: matrix.rolling == true
+        run: docker tag foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      - name: Upload rolling
+        if: matrix.rolling == true
+        run: docker push foggyubiquity/containizen:${{ matrix.language }}${{ matrix.pkgManagerName }}
+      - name: Count ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} layers
+        if: matrix.rolling == true
+        run: |
+          echo 'LAYERS<<EOF' >> $GITHUB_ENV
+          docker history -q foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }} | wc -l >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+      - name: Create Badge
+        if: matrix.rolling == true
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.ACT_IONS }}
+          gistID: a30bfe852b49d4f029eabb4905b78795
+          filename: ${{ matrix.language }}${{ matrix.pkgManagerName }}.json
+          label: Layers
+          message: ${{ env.LAYERS }}
+          color: blue
