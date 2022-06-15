@@ -10,6 +10,8 @@ let
 in
 with pkgs;
 with python3Packages;
+# c toolchain unecessary - https://fzakaria.com/2021/08/02/a-minimal-nix-shell.html
+# nixos package so still not included in approach
 mkShell rec
 {
   name = "impureEnv";

@@ -6,6 +6,14 @@ import sources.nixpkgs {
   overlays = [
     (
       final: prev: {
+        # Strip Locale's from built container for non-used languages (~15Mb space reduction) - override glibc allLocales - not chaining into container at this time
+        glibc = prev.glibc.overrideAttrs
+          (
+            old: {
+              allLocales = "C.UTF-8";
+              locales = "C.UTF-8";
+            }
+          );
         k6 = prev.k6.overrideAttrs (
           old: {
             name = "patched-k6-${old.version}";
