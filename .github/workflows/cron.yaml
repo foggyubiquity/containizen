@@ -1,11 +1,14 @@
-name: pull requests to master
+name: cron
 on:
-  pull_request:
-    types: [ opened, synchronize ]
-    branches:
-      - master
+  schedule:
+    - cron: '15 2 * * *'
 
 jobs:
+  makisu:
+    if: github.actor != 'nektos/act'
+    uses: ./.github/workflows/common-makisu.yaml
+    secrets: inherit
+
   OCI-java:
     uses: ./.github/workflows/common-oci.yaml
     with:
@@ -14,6 +17,7 @@ jobs:
       pkgManager: '[ "none" ]'
       include: '[{"rolling": true, "version": 11}]'
     secrets: inherit
+
   OCI-nodejs:
     uses: ./.github/workflows/common-oci.yaml
     with:
@@ -22,12 +26,13 @@ jobs:
       pkgManager: '[ "none", "bundled" ]'
       include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
     secrets: inherit
+
   OCI-python:
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
-      version: '[ 37 ]'
+      version: '[ 38 ]'
       pkgManager: '[ "none" ]'
-      include: '[{"rolling": true, "version": 37}]'
+      include: '[{"rolling": true, "version": 38}]'
     secrets: inherit
 
