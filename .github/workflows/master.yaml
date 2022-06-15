@@ -33,7 +33,17 @@ jobs:
 
   OCI-java:
     needs: [ changes ]
-    if: needs.changes.outputs.java == 'true'
+    # .github/workflows won't pass as an output from 'changes' adding negative
+    # condition to ensure runs of config file changes on 'push'
+    if: >-
+      ${{
+        needs.changes.outputs.nodejs == 'true' ||
+        (
+          needs.changes.outputs.java != 'true' &&
+          needs.changes.outputs.nodejs != 'true' &&
+          needs.changes.outputs.python != 'true'
+        )
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "java" ]'
@@ -44,7 +54,15 @@ jobs:
 
   OCI-nodejs:
     needs: [ changes ]
-    if: needs.changes.outputs.nodejs == 'true'
+    if: >-
+      ${{
+        needs.changes.outputs.nodejs == 'true' ||
+        (
+          needs.changes.outputs.java != 'true' &&
+          needs.changes.outputs.nodejs != 'true' &&
+          needs.changes.outputs.python != 'true'
+        )
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "nodejs" ]'
@@ -55,7 +73,15 @@ jobs:
 
   OCI-python:
     needs: [ changes ]
-    if: needs.changes.outputs.python == 'true'
+    if: >-
+      ${{
+        needs.changes.outputs.python == 'true' ||
+        (
+          needs.changes.outputs.java != 'true' &&
+          needs.changes.outputs.nodejs != 'true' &&
+          needs.changes.outputs.python != 'true'
+        )
+      }}
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
