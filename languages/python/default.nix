@@ -20,10 +20,13 @@ let
     extra =
       {
         pythonPackages = pkgs.${language.extra.pythonVer};
-        pkgs = with language.extra.pythonPackages; [ pip ];
+        pkgs =
+          if pkgManager == "bundled" then
+            with language.extra.pythonPackages; [ pip ] else
+            with language.extra.pythonPackages; [ ];
         pythonVer = "python${ver}Packages";
         # TODO: push the bash path into a strategic file so docker run xxxx bash cannot easily happen in production
-        paths = ":${pkgs.bash}/bin" + ( if pkgManager == "bundled" then with language.extra.pythonPackages; ":${pip}/bin" else "");
+        paths = ":${pkgs.bash}/bin" + (if pkgManager == "bundled" then with language.extra.pythonPackages; ":${pip}/bin" else "");
       };
     pip = if pkgManager == "bundled" then "-pip" else "";
     pkg = pkgs.${language.toNix};

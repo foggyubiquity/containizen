@@ -36,6 +36,7 @@ mkShell rec
       execline
       nodejs
       act
+      dive
     ]
   ) ++
   [
