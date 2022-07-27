@@ -12,6 +12,11 @@ jobs:
       nodejs: ${{ steps.filter.outputs.nodejs }}
       python: ${{ steps.filter.outputs.python }}
     steps:
+      - name: DockerHub login
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1

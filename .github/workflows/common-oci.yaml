@@ -36,6 +36,11 @@ jobs:
         pkgManager: ${{ fromJSON(inputs.pkgManager) }}
         include: ${{ fromJSON(inputs.include) }}
     steps:
+      - name: DockerHub login
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
@@ -98,6 +103,11 @@ jobs:
         pkgManager: ${{ fromJSON(inputs.pkgManager) }}
         include: ${{ fromJSON(inputs.include) }}
     steps:
+      - name: DockerHub login
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 1
@@ -115,10 +125,6 @@ jobs:
           github-token: ${{ secrets.ACT_IONS }}
         env:
           CI: true
-      - run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       - name: Upload ${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
         run: docker push foggyubiquity/containizen:${{ matrix.language }}-v${{ matrix.version }}${{ matrix.pkgManagerName }}
       - name: Tag rolling
