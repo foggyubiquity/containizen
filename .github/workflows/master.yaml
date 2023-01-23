@@ -71,7 +71,7 @@ jobs:
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "nodejs" ]'
-      version: '[ 10, 12 ]'
+      version: '[ 14, 16, 18 ]'
       pkgManager: '[ "none", "bundled" ]'
       include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
     secrets: inherit
