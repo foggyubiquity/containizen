@@ -1,4 +1,4 @@
-pip install pip-tools
+# pip install pip-tools
 pip-sync requirements/prod.txt requirements/dev.txt
 
 # export APP=$(grep "name=" ./setup.py | cut -d"\"" -f2 | cut -d"'" -f2)

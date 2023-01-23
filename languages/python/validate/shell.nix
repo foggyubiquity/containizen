@@ -12,7 +12,7 @@ let
 in
 mkShell rec
 {
-  name = "impureEnv";
+  name = "pythonTestEnv";
   venvDir = "./.venv";
   LC_ALL = "C";
   buildInputs = with pp; [
@@ -22,7 +22,7 @@ mkShell rec
     # This execute some shell code to initialize a venv in $venvDir before
     # dropping into the shell
     venvShellHook
-    pip
+    pip-tools
     # pip-tools can't currently be used from NIX as pip-sync tries to remove setuptools-scm which fails due to read only filesystem
   ];
 }

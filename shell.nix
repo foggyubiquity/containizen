@@ -14,7 +14,7 @@ with python3Packages;
 # nixos package so still not included in approach
 mkShell rec
 {
-  name = "impureEnv";
+  name = "containizenEnv";
   venvDir = "./.venv";
   LC_ALL = "C";
   # nativeBuildInput = [ setuptools ];
@@ -25,13 +25,13 @@ mkShell rec
       yj
       yq
     ] else [
-      # A python interpreter including the 'venv' module is required to bootstrap
-      # the environment.
+      # # A python interpreter including the 'venv' module is required to bootstrap
+      # # the environment.
       python3Minimal
-      # This execute some shell code to initialize a venv in $venvDir before
-      # dropping into the shell
+      # # This execute some shell code to initialize a venv in $venvDir before
+      # # dropping into the shell
       venvShellHook
-      pip
+      pip-tools
 
       # Normal NixPkgs
       adoptopenjdk-openj9-bin-11
