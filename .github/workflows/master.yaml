@@ -31,11 +31,6 @@ jobs:
             python:
               - 'languages/python/**'
 
-  makisu:
-    if: github.actor != 'nektos/act'
-    uses: ./.github/workflows/common-makisu.yaml
-    secrets: inherit
-
   OCI-java:
     needs: [ changes ]
     # .github/workflows won't pass as an output from 'changes' adding negative

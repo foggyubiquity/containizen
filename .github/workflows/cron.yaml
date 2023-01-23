@@ -4,11 +4,6 @@ on:
     - cron: '15 2 * * *'
 
 jobs:
-  makisu:
-    if: github.actor != 'nektos/act'
-    uses: ./.github/workflows/common-makisu.yaml
-    secrets: inherit
-
   OCI-java:
     uses: ./.github/workflows/common-oci.yaml
     with:

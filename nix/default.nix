@@ -1,5 +1,5 @@
 let
-  sources = import ../nix/sources.nix;
+  sources = import ./sources.nix;
   callPackage = (import sources.nixpkgs { }).callPackage;
 in
 import sources.nixpkgs {
