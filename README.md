@@ -27,14 +27,11 @@ NOTE: `RUN` should *never* be used in `Dockerfile`(s) as it places a hard requir
 
 Maintained as per [Release / LTS Information](https://nodejs.org/en/about/releases/)
 
-| tag | version | usage |
-| --- | --- | --- |
-| nodejs | v10.x | production |
-| nodejs-v10 | v10.x | production |
-| nodejs-v12 | v12.x | production |
-| nodejs-npm | v10.x | development |
-| nodejs-v10-npm | v10.x + npm | development |
-| nodejs-v12-npm | v12.x + npm | development |
+| tag | version |
+| --- | --- | 
+| nodejs | v10.x |
+| nodejs-v10 | v10.x |
+| nodejs-v12 | v12.x |
 
 #### Production Usage
 
@@ -61,17 +58,17 @@ COPY . /opt/app
 
 #### Versions
 
-* Maintained in alignment with bugfix branches per [Status of Python Branches](https://devguide.python.org/#status-of-python-branches)
+* Maintained in alignment with Pythons official [Supported Versions](https://devguide.python.org/versions/#supported-versions) and availability of these versions on [NixPkgs](https://search.nixos.org/packages?channel=22.11&from=0&size=50&sort=relevance&type=packages&query=python3*Full)
 * For advice about [when to switch versions](https://pythonspeed.com/articles/major-python-release/)
 
-| tag | version | usage |
-| --- | --- | --- |
-| python | v3.7.x | production |
-| python-v37 | v3.7.x | production |
-| python-v38 | v3.8.x | production |
-| python-pip | v3.7.x | development |
-| python-v37-pip | v3.7.x | development |
-| python-v38-pip | v3.8.x | development |
+| tag | version |
+| --- | --- | 
+| python | v3.12.x |
+| python-v38 | v3.8.x |
+| python-v39 | v3.9.x |
+| python-v310 | v3.10.x |
+| python-v311 | v3.11.x |
+| python-v312 | v3.12.x |
 
 #### Production Usage
 
@@ -111,13 +108,11 @@ Maintained per [Release / LTS Information](https://adoptopenjdk.net/support.html
 
 **Java** tag means: Headless Java Release Compile (JRE) of OpenJDK via AdoptOpenJDK official binaries with OpenJ9 Java Virtual Machine (JVM)
 
-| tag | version | usage |
-| --- | --- | --- |
-| java | v11.x | production |
-| java-v8 | v8.x | production |
-| java-v11 | v11.x | production |
-| graal | v19.x | unavailable - waiting for NixPkgs support |
-| graal-v19 | v19.x | unavailable - waiting for NixPkgs support |
+| tag | version | 
+| --- | --- | 
+| java | v11.x |
+| java-v8 | v8.x |
+| java-v11 | v11.x |
 
 #### Production Usage
 
@@ -210,15 +205,13 @@ Labels are respected, for those unfamiliar all built containers _should_ have th
 
 ## Value Experimentations Required (PR Welcome)
 
-- musl support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
-- Cache nix/store in GitHub Actions
+- Other Languages
+- Compiler(cross compiling/platform): nix binds most packages to stdenv, which in turn inherit buildDeps from glibc. This means that layer 3, or ~30mb is sacrificed to Nixpkgs and is most likely unnecessary as most packages requiring glibc libs & locales will specify them in install phase. [info](https://discourse.nixos.org/t/how-to-override-stdenv-for-all-packages-in-mkshell/10368/16) & notes in `common/skaware.nix`
+- pkgsCross for cross-compile (musl) support: already available in Nix [Cross Compiling](https://matthewbauer.us/blog/beginners-guide-to-cross.html)
 - Safe / Functional way of removing `pip` from Python image.
 - Goss automatic execution if `goss.yaml` present via S6
 - Goss Build Validation
-- Other Languages
-- Strip Locale's from built container for non-used languages (~15Mb space reduction)
+- s6 switch to s6-rc for [supervised processes](https://github.com/just-containers/s6-overlay#writing-a-service-script)
 - *Python3xMinimal* is not available currently in NixPkgs, the default *Python3Minimal* binds to Python 3.7. A pull request could be raised to enable more flexible minimal installs (and save compiling Python within this project)
-- *Python* pip & language are isolated in *-pip images - multi-link and share
-- *Python* pip container is buggy on GitHub actions, but compiles locally & via act - need to identify the delta for this development container
-- *Python* (optional) venv support - slower than *shiv*
-- *NodeJS* Binary executable detection
+- [Stream](https://nixos.org/manual/nixpkgs/stable/#ssec-pkgs-dockerTools-streamLayeredImage) output to Container Registry (skip disk i/o)
+- extension of nixpkgs (via fetchfromGitHub) containizen.copyToRoot (as ADD /) [NixPkgs info](https://nixos.org/manual/nixpkgs/stable/#ssec-pkgs-dockerTools-buildImage) & [Extra info on BuildEnv](https://stackoverflow.com/questions/49590552/how-buildenv-builtin-function-works) & [BuildEnv in NixPkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/build-support/buildenv/default.nix)

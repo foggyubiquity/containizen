@@ -68,7 +68,9 @@ jobs:
       language: '[ "nodejs" ]'
       version: '[ 14, 16, 18 ]'
       pkgManager: '[ "none", "bundled" ]'
-      include: '[{"rolling": true, "version": 10}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
+      # Leaving in as quick-note on adding -npm should it be desired by others
+      # include: '[{"rolling": true, "version": 18}, {"language": "nodejs", "pkgManager": "bundled", "pkgManagerName": "-npm"}]'
+      include: '[{"rolling": true, "version": 18}]'
     secrets: inherit
 
   OCI-python:
@@ -85,8 +87,8 @@ jobs:
     uses: ./.github/workflows/common-oci.yaml
     with:
       language: '[ "python" ]'
-      version: '[ 38 ]'
+      version: '[ 38, 39, 310, 311, 312 ]'
       pkgManager: '[ "none" ]'
-      include: '[{"rolling": true, "version": 38}]'
+      include: '[{"rolling": true, "version": 312}]'
     secrets: inherit
 

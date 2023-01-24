@@ -1,13 +1,19 @@
-{ rsync, callPackage, s6-overlay }:
+{
+  callPackage,
+  rsync,
+  s-tar,
+  s6-overlay-noarch,
+  s6-overlay-x86_64,
+  tree
+}:
 let
   s6-services = ../s6;
   start = builtins.readFile ./auto-start-language;
 in
 ''
   # User Permissions
-  mkdir -p ./opt/app ./root ./home/containizen ./etc ./var ./tmp/log
+  mkdir -p ./opt/app ./root ./home/containizen ./etc ./var ./tmp/log ./run
   ln -s /tmp/log ./var/log
-  chmod 755 ./etc ./opt/app ./root ./home/containizen
   echo "root:x:0:0::/root:/bin/s6-false" > ./etc/passwd
   echo "containizen:x:289:308::/home/containizen:/bin/s6-false" >> ./etc/passwd
   echo "root:!x:::::::" > ./etc/shadow
@@ -17,10 +23,14 @@ in
   echo "root:x::" > ./etc/gshadow
   echo "containizen:!::" >> ./etc/gshadow
 
-  chmod 0555 ./etc/passwd ./etc/shadow ./etc/group ./etc/gshadow
-
   ${rsync}/bin/rsync -a ${s6-services}/ ./
-  ${rsync}/bin/rsync -a ${s6-overlay}/builder/overlay-rootfs/. .
+  # s6-services affects permissions necessary for s6-overlay-noarch
+  chmod -R 777 .
+  ${s-tar}/bin/star -x -xz -nochown -f=${s6-overlay-noarch} -C=./
+  # symbolic link /bin (nixpkgs style) to /command (s6-overlay style)
+  # cd command
+  # ln -s ../bin/* .
+  # cd ..
   chmod -R 0755 .
 
   # create must exist directories
@@ -37,16 +47,19 @@ in
   # chmod 0550 ./usr/bin/logutil-{newfifo,service,service-main}
   # chmod 0550 ./usr/bin/printcontenv
   # chmod 0550 ./usr/bin/with-{contenv,retries}
-  chmod 0550 ./usr/bin
+  # chmod 0550 ./usr/bin
+  # just-containers/s6-overlay V3 change
+  # https://github.com/just-containers/s6-overlay/blob/master/MOVING-TO-V3.md
+  chmod 0550 ./command
 
   # fix init perms
   chmod 0550 ./init
-  chmod 0550 ./etc/s6/init/init-*
-  chmod 0550 ./etc/s6/init-catchall/init-*
-  chmod 0550 ./etc/s6/init-no-catchall/init-*
-  chmod 0550 ./etc/s6/services/.s6-svscan/{crash,finish}
-  chmod 0550 ./etc/s6/services/s6-fdholderd/run
-  chmod 0550 ./etc/s6/services/s6-svscan-log/run
+  chmod 0550 ./etc/s6/init
+  # chmod 0550 ./etc/s6/init-catchall/init-*
+  # chmod 0550 ./etc/s6/init-no-catchall/init-*
+  # chmod 0550 ./etc/s6/services/.s6-svscan/{crash,finish}
+  # chmod 0550 ./etc/s6/services/s6-fdholderd/run
+  # chmod 0550 ./etc/s6/services/s6-svscan-log/run
 
   # fix custom file permissions
   chmod 0540 ./etc/fix-attrs.d/00-boot

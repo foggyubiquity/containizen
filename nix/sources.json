@@ -49,16 +49,30 @@
         "url": "https://github.com/NixOS/nixpkgs/archive/cfb43ad7b941d9c3606fb35d91228da7ebddbfc5.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
-    "s6-overlay": {
+    "s6-overlay-noarch": {
         "branch": "master",
         "description": "s6 overlay for containers (includes execline, s6-linux-utils & a custom init)",
         "homepage": "",
         "owner": "just-containers",
         "repo": "s6-overlay",
         "rev": "4d34b96acc13a19e8382d523daeeae67d802e2b5",
-        "sha256": "0xz4bxb7s64ikpy5cxknn1wyrnyk7mw8hs26qw845a910ipb2lgs",
-        "type": "tarball",
-        "url": "https://github.com/just-containers/s6-overlay/archive/4d34b96acc13a19e8382d523daeeae67d802e2b5.tar.gz",
-        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+        "sha256": "0bkm3vwqzj0jk7f1yqky81hghrcw3vrxvf68b88vsik483xgiw77",
+        "type": "file",
+        "url": "https://github.com/just-containers/s6-overlay/releases/download/v3.1.3.0/s6-overlay-noarch.tar.xz",
+        "url_template": "https://github.com/<owner>/<repo>/releases/download/<version>/s6-overlay-noarch.tar.xz",
+        "version": "v3.1.3.0"
+    },
+    "s6-overlay-x86_64": {
+        "branch": "master",
+        "description": "s6 overlay for containers (includes execline, s6-linux-utils & a custom init)",
+        "homepage": "",
+        "owner": "just-containers",
+        "repo": "s6-overlay",
+        "rev": "4d34b96acc13a19e8382d523daeeae67d802e2b5",
+        "sha256": "0c3d5gzn4fyf0kpb25zrmf0f6lkajhh88f2prqzq2y6nh0dvmhwg",
+        "type": "file",
+        "url": "https://github.com/just-containers/s6-overlay/releases/download/v3.1.3.0/s6-overlay-x86_64.tar.xz",
+        "url_template": "https://github.com/<owner>/<repo>/releases/download/<version>/s6-overlay-x86_64.tar.xz",
+        "version": "v3.1.3.0"
     }
 }

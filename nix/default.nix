@@ -25,13 +25,16 @@ import sources.nixpkgs {
         goss = callPackage
           ./goss.nix
           { inherit sources; };
-        s6-overlay = sources.s6-overlay;
-        # vulnix = callPackage sources.vulnix { };
+        s6-overlay-noarch = sources.s6-overlay-noarch;
+        # TODO syslogd-overlay
+        # https://github.com/just-containers/s6-overlay/blob/master/MOVING-TO-V3.md
+        s6-overlay-x86_64 = sources.s6-overlay-x86_64;
         niv = (import sources.niv { }).niv;
       }
     )
   ];
   config = {
     allowUnfree = true;
+    # replaceStdenv = { pkgs, ... }: pkgs.clangStdenv;
   };
 }

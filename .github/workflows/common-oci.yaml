@@ -55,8 +55,8 @@ jobs:
           signingKey: ${{ secrets.CACHIX_SIGNING_KEY }}
       - name: Update NixPkgs
         run: exec ${NIX_SHELL} 'niv update nixpkgs'
-      - name: Build Base
-        run: exec ${NIX_BUILD} base.nix
+      - name: Build Base for Vulnerabilities Whitelist
+        run: exec ${NIX_BUILD} --argstr genVulnixWhitelist true base.nix
       - name: Construct Vulnerabilities Whitelist
         run: "exec ${NIX_SHELL} 'vulnix -W tmp.whitelist ./result; cat tmp.whitelist | yj -ty | yq \"with_entries(if (.key|test(\\\"^(glibc).*\\\")) then empty else ( {key: .key, value: .value } ) end )\" | yj -yt > build.whitelist'"
       - name: Generate Dependency Tree

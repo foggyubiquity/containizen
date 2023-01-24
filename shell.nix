@@ -21,22 +21,9 @@ mkShell rec
   buildInputs = (
     if ci then [
       docker
-      vulnix
-      yj
-      yq
     ] else [
-      # # A python interpreter including the 'venv' module is required to bootstrap
-      # # the environment.
-      python3Minimal
-      # # This execute some shell code to initialize a venv in $venvDir before
-      # # dropping into the shell
-      venvShellHook
-      pip-tools
-
       # Normal NixPkgs
-      adoptopenjdk-openj9-bin-11
       execline
-      nodejs
       act
       dive
     ]
@@ -44,6 +31,9 @@ mkShell rec
   [
     # Common Packages
     niv
+    vulnix
+    yj
+    yq
   ];
 
   # Now we can execute any commands within the virtual environment.
