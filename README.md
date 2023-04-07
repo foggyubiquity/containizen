@@ -4,6 +4,8 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/foggyubiquity/containizen/rebuild%20containizen?style=for-the-badge) ![Docker Pulls](https://img.shields.io/docker/pulls/foggyubiquity/containizen?style=for-the-badge)
 
+NOTE: Upstream dependencies have breaking changes, I am aware these changes require a large refactor, and will incorporate appropriately as soon as possible after stabilizing the current project https://github.com/cyvive/cyvizen[*Cyvizen*], however the prior version still works with self updates as exepected, and the upstream changes don't introduce any new essential functionality.
+
 These images are lightweight by design with the following features:
 
 - Built in the Cloud for the Cloud
